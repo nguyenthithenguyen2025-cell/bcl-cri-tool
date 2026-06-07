@@ -7,6 +7,7 @@ from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 from config.parameters import PARAMETERS, PARAM_BY_ID
 from config.parameters import RISK_COLORS
+from core.classifier import generate_technical_analysis
 
 _THIN = Side(style="thin", color="CCCCCC")
 _BORDER = Border(left=_THIN, right=_THIN, top=_THIN, bottom=_THIN)
@@ -38,13 +39,56 @@ def _data_cell(ws, row, col, value, bold=False, align="left", bg=None):
     return cell
 
 
+def _sheet_report_info(wb, entries: list[dict], report_meta: dict):
+    """Sheet 0: Thông tin báo cáo và tổng quan danh sách BCL."""
+    ws = wb.create_sheet("0. Thông tin báo cáo")
+    _header_cell(ws, 1, 1, "Thông tin báo cáo", bg="2c3e50")
+    ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=3)
+
+    rows = [
+        ("Tên công cụ", "Công cụ hỗ trợ lựa chọn giải pháp đóng bãi chôn lấp CTRSH"),
+        ("Đơn vị thực hiện", report_meta.get("don_vi_thuc_hien", "—")),
+        ("Người lập", report_meta.get("nguoi_lap", "—")),
+        ("Người kiểm tra", report_meta.get("nguoi_kiem_tra", "—")),
+        ("Ngày lập báo cáo", report_meta.get("ngay_bao_cao", "—")),
+        ("Số BCL trong file", len(entries)),
+    ]
+    for row_idx, (label, value) in enumerate(rows, 2):
+        _header_cell(ws, row_idx, 1, label, bg="ecf0f1", fg="2c3e50", bold=False)
+        _data_cell(ws, row_idx, 2, value)
+
+    start_row = len(rows) + 4
+    _header_cell(ws, start_row, 1, "STT", bg="1f77b4")
+    _header_cell(ws, start_row, 2, "Tên BCL", bg="1f77b4")
+    _header_cell(ws, start_row, 3, "Loại BCL", bg="1f77b4")
+    _header_cell(ws, start_row, 4, "CRI", bg="1f77b4")
+    _header_cell(ws, start_row, 5, "Cấp rủi ro", bg="1f77b4")
+    _header_cell(ws, start_row, 6, "Giải pháp", bg="1f77b4")
+
+    for i, entry in enumerate(entries, 1):
+        info = entry.get("info", {})
+        result = entry.get("result", {})
+        risk = result.get("risk", {})
+        solution = result.get("solution", {})
+        r = start_row + i
+        _data_cell(ws, r, 1, i, align="center")
+        _data_cell(ws, r, 2, info.get("ten_bcl", ""))
+        _data_cell(ws, r, 3, info.get("loai_bcl", ""))
+        _data_cell(ws, r, 4, result.get("CRI"), align="center")
+        _data_cell(ws, r, 5, risk.get("label", ""))
+        _data_cell(ws, r, 6, solution.get("short_name", ""))
+
+    for col, width in {"A": 26, "B": 34, "C": 16, "D": 12, "E": 26, "F": 18}.items():
+        ws.column_dimensions[col].width = width
+
+
 def _sheet_bcl_info(wb, entries: list[dict]):
     """Sheet 1: Thông tin cơ bản BCL."""
     ws = wb.create_sheet("1. Thông tin BCL")
     ws.row_dimensions[1].height = 40
 
     headers = [
-        "STT", "Tên BCL", "Tỉnh/TP", "Huyện", "Xã", "Loại BCL",
+        "STT", "Tên BCL", "Tỉnh/TP", "Xã", "Vĩ độ", "Kinh độ", "Loại BCL",
         "Diện tích (ha)", "Thể tích (m³)", "Chiều cao (m)",
         "Năm bắt đầu", "Năm ngừng", "Ghi chú",
     ]
@@ -53,7 +97,7 @@ def _sheet_bcl_info(wb, entries: list[dict]):
         ws.column_dimensions[get_column_letter(col)].width = 18
 
     ws.column_dimensions["B"].width = 30
-    ws.column_dimensions["L"].width = 40
+    ws.column_dimensions["M"].width = 40
 
     for i, e in enumerate(entries, 1):
         info = e.get("info", {})
@@ -61,8 +105,9 @@ def _sheet_bcl_info(wb, entries: list[dict]):
             i,
             info.get("ten_bcl", ""),
             info.get("tinh", ""),
-            info.get("huyen", ""),
             info.get("xa", ""),
+            info.get("toa_do_lat"),
+            info.get("toa_do_lon"),
             info.get("loai_bcl", ""),
             info.get("dien_tich_ha"),
             info.get("the_tich_m3"),
@@ -164,6 +209,8 @@ def _sheet_results(wb, entries: list[dict]):
         ("Thời gian quản lý sau đóng", "result.solution.monitoring_period"),
         ("Căn cứ pháp lý", "result.solution.legal_basis"),
         ("Thông số thiếu dữ liệu", "missing_notes"),
+        ("Tóm tắt phân tích chuyên môn", "analysis.summary"),
+        ("Khuyến nghị kỹ thuật tiếp theo", "analysis.recommended_actions"),
     ]
 
     row = 2
@@ -172,6 +219,7 @@ def _sheet_results(wb, entries: list[dict]):
         result = entry.get("result", {})
         risk = result.get("risk", {})
         solution = result.get("solution", {})
+        analysis = generate_technical_analysis(entry)
 
         for label, path in FIELD_LABELS:
             parts = path.split(".")
@@ -196,6 +244,10 @@ def _sheet_results(wb, entries: list[dict]):
                     if missing_notes
                     else "—"
                 )
+            elif parts[0] == "analysis":
+                val = analysis.get(parts[1])
+                if isinstance(val, list):
+                    val = "\n".join(f"• {x}" for x in val)
 
             _header_cell(ws, row, 1, label, bg="ecf0f1", fg="2c3e50", bold=False)
             ws.cell(row, 2, value=val)
@@ -211,7 +263,7 @@ def _sheet_results(wb, entries: list[dict]):
     ws.column_dimensions["B"].width = 60
 
 
-def export_to_excel(entries: list[dict]) -> BytesIO:
+def export_to_excel(entries: list[dict], report_meta: dict | None = None) -> BytesIO:
     """
     Xuất danh sách BCL ra file Excel với 3 sheet.
 
@@ -221,6 +273,7 @@ def export_to_excel(entries: list[dict]) -> BytesIO:
     wb = openpyxl.Workbook()
     wb.remove(wb.active)   # Xóa sheet mặc định
 
+    _sheet_report_info(wb, entries, report_meta or {})
     _sheet_bcl_info(wb, entries)
     _sheet_cri_scores(wb, entries)
     _sheet_results(wb, entries)

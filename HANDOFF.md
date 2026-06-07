@@ -61,6 +61,11 @@
 | `pages/4_Kết_quả.py` | Nâng cấp phần phân tích tự động thành phân tích chuyên môn theo nhóm H/P/R và khuyến nghị kỹ thuật tiếp theo |
 | `export/html_export.py`, `export/word_export.py` | Bổ sung mục "Phân tích chuyên môn" vào báo cáo HTML và Word |
 | `tests/test_core_exports.py` | Thêm kiểm thử hồi quy cho hàm phân tích chuyên môn |
+| `pages/6_Xuất_báo_cáo.py` | Thêm trường thông tin trang bìa: đơn vị thực hiện, người lập, người kiểm tra, ngày lập báo cáo |
+| `export/word_export.py` | Nâng cấp báo cáo Word với trang bìa, thông tin báo cáo, tọa độ BCL và ghi chú giới hạn sử dụng kết quả |
+| `export/html_export.py` | Nâng cấp HTML/PDF với trang bìa A4, metadata báo cáo và phần thông tin báo cáo |
+| `export/excel_export.py` | Thêm sheet "0. Thông tin báo cáo", bỏ trường Huyện, bổ sung tọa độ và tóm tắt phân tích chuyên môn |
+| `tests/test_core_exports.py` | Bổ sung kiểm thử metadata báo cáo trong HTML và Excel |
 
 **Kiểm tra đã chạy:**
 - `python -m unittest discover -s tests -v`: đạt 10/10 test.

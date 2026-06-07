@@ -79,6 +79,32 @@ include_charts = st.checkbox("Bao gồm biểu đồ (radar, gauge, bar)", value
 include_solution_detail = st.checkbox("Bao gồm chi tiết giải pháp đóng bãi", value=True)
 include_legal = st.checkbox("Bao gồm căn cứ pháp lý", value=True)
 
+with st.expander("Thông tin đưa vào trang bìa báo cáo", expanded=True):
+    col_meta1, col_meta2 = st.columns(2)
+    with col_meta1:
+        don_vi_thuc_hien = st.text_input(
+            "Đơn vị thực hiện",
+            value="",
+            placeholder="Ví dụ: Trường Đại học Thủy Lợi / Sở Nông nghiệp và Môi trường...",
+        )
+        nguoi_lap = st.text_input(
+            "Người lập báo cáo",
+            value="",
+        )
+    with col_meta2:
+        nguoi_kiem_tra = st.text_input(
+            "Người kiểm tra",
+            value="",
+        )
+        ngay_bao_cao = st.date_input("Ngày lập báo cáo")
+
+report_meta = {
+    "don_vi_thuc_hien": don_vi_thuc_hien.strip(),
+    "nguoi_lap": nguoi_lap.strip(),
+    "nguoi_kiem_tra": nguoi_kiem_tra.strip(),
+    "ngay_bao_cao": ngay_bao_cao.strftime("%d/%m/%Y"),
+}
+
 st.divider()
 
 # ════════════════════════════════════════════════════════
@@ -93,7 +119,7 @@ if st.button("📥 Tạo file Excel", type="primary"):
 
     with st.spinner("Đang tạo file Excel..."):
         try:
-            buf = export_to_excel(selected_entries)
+            buf = export_to_excel(selected_entries, report_meta=report_meta)
             n = len(selected_entries)
             fname = (
                 f"CRI_{selected_entries[0]['info'].get('ten_bcl','BCL').replace(' ','_')}.xlsx"
@@ -128,6 +154,7 @@ if st.button("📥 Tạo file Word", type="primary"):
                     entry,
                     include_solution=include_solution_detail,
                     include_legal=include_legal,
+                    report_meta=report_meta,
                 )
                 ten = entry["info"].get("ten_bcl", "BCL").replace(" ", "_")
                 st.download_button(
@@ -165,6 +192,7 @@ if st.button("📥 Tạo file HTML (in PDF)", type="primary"):
                     entry,
                     include_solution=include_solution_detail,
                     include_legal=include_legal,
+                    report_meta=report_meta,
                 )
                 ten = entry["info"].get("ten_bcl", "BCL").replace(" ", "_")
                 st.download_button(

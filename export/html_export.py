@@ -35,6 +35,7 @@ def export_to_html(
     entry: dict,
     include_solution: bool = True,
     include_legal: bool = True,
+    report_meta: dict | None = None,
 ) -> bytes:
     """
     Tạo báo cáo kỹ thuật dạng HTML cho một BCL.
@@ -51,6 +52,7 @@ def export_to_html(
     solution = result.get("solution", {})
     assumed_max = result.get("assumed_max", [])
     analysis = generate_technical_analysis(entry)
+    report_meta = report_meta or {}
 
     ten_bcl = info.get("ten_bcl", "Bãi chôn lấp")
     tinh = info.get("tinh", "")
@@ -59,6 +61,10 @@ def export_to_html(
     risk_label = risk.get("label", "")
     cri_val = result.get("CRI")
     today = date.today().strftime("%d/%m/%Y")
+    report_date = report_meta.get("ngay_bao_cao") or today
+    org = report_meta.get("don_vi_thuc_hien") or "—"
+    evaluator = report_meta.get("nguoi_lap") or "—"
+    reviewer = report_meta.get("nguoi_kiem_tra") or "—"
 
     # ── CSS
     css = """
@@ -86,6 +92,17 @@ th { background: #dde8f5; font-weight: bold; text-align: left; }
 .title-block { text-align: center; margin-bottom: 16px; }
 .title-block h0 { font-size: 14pt; font-weight: bold; color: #1f77b4; line-height: 1.4; }
 .title-block .sub { font-size: 11pt; margin-top: 4px; }
+.cover {
+    min-height: 250mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    page-break-after: always;
+}
+.cover-title { text-align: center; margin-top: 28mm; }
+.cover-title .main { font-size: 17pt; color: #1f77b4; font-weight: bold; margin-bottom: 8px; }
+.cover-title .submain { font-size: 13pt; font-weight: bold; line-height: 1.45; }
+.cover-meta { width: 82%; margin: 28px auto 0; }
 .risk-badge {
     display: inline-block;
     padding: 6px 18px;
@@ -126,6 +143,8 @@ ul li { margin: 3px 0; }
         ("Tên bãi chôn lấp", info.get("ten_bcl")),
         ("Tỉnh / Thành phố", info.get("tinh")),
         ("Xã / Phường", info.get("xa")),
+        ("Vĩ độ", info.get("toa_do_lat")),
+        ("Kinh độ", info.get("toa_do_lon")),
         ("Loại BCL", loai_bcl_str),
         ("Diện tích (ha)", _fmt(info.get("dien_tich_ha"), 2)),
         ("Thể tích ước tính (m³)", _fmt(info.get("the_tich_m3"), 0)),
@@ -277,13 +296,43 @@ ul li { margin: 3px 0; }
 
 <div class="page">
 
+  <div class="cover">
+    <div>
+      <div style="text-align:center; font-weight:bold;">{org.upper() if org != '—' else 'ĐƠN VỊ THỰC HIỆN'}</div>
+      <div class="cover-title">
+        <div class="main">BÁO CÁO KỸ THUẬT</div>
+        <div class="submain">ĐÁNH GIÁ RỦI RO VÀ LỰA CHỌN GIẢI PHÁP CAN THIỆP, ĐÓNG BÃI CHÔN LẤP CTRSH</div>
+        <div style="margin-top:18px; font-size:13pt; font-weight:bold;">{ten_bcl}</div>
+      </div>
+      <table class="cover-meta">
+        <tr><td style="font-weight:bold; width:38%;">Tỉnh/Thành phố</td><td>{tinh or '—'}</td></tr>
+        <tr><td style="font-weight:bold;">Xã/Phường</td><td>{info.get('xa') or '—'}</td></tr>
+        <tr><td style="font-weight:bold;">Đơn vị thực hiện</td><td>{org}</td></tr>
+        <tr><td style="font-weight:bold;">Người lập</td><td>{evaluator}</td></tr>
+        <tr><td style="font-weight:bold;">Người kiểm tra</td><td>{reviewer}</td></tr>
+        <tr><td style="font-weight:bold;">Ngày lập báo cáo</td><td>{report_date}</td></tr>
+      </table>
+    </div>
+    <div style="text-align:center; font-style:italic; font-size:10pt;">
+      Báo cáo được tạo từ Công cụ hỗ trợ lựa chọn giải pháp đóng bãi chôn lấp CTRSH.
+    </div>
+  </div>
+
   <div class="title-block">
     <div class="h0" style="font-size:14pt; font-weight:bold; color:#1f77b4; line-height:1.4;">
       BÁO CÁO ĐÁNH GIÁ RỦI RO VÀ GIẢI PHÁP ĐÓNG BÃI CHÔN LẤP
     </div>
     <div class="sub">Chỉ số Rủi ro Tổng hợp (CRI) — Đề tài TNMT.2024.05.05</div>
-    <div class="sub" style="margin-top:4px; font-style:italic;">Ngày lập báo cáo: {today}</div>
+    <div class="sub" style="margin-top:4px; font-style:italic;">Ngày lập báo cáo: {report_date}</div>
   </div>
+
+  <h1>Thông tin báo cáo</h1>
+  <table>
+    <tr><td style="font-weight:bold; width:40%;">Đơn vị thực hiện</td><td>{org}</td></tr>
+    <tr><td style="font-weight:bold;">Người lập</td><td>{evaluator}</td></tr>
+    <tr><td style="font-weight:bold;">Người kiểm tra</td><td>{reviewer}</td></tr>
+    <tr><td style="font-weight:bold;">Ngày lập báo cáo</td><td>{report_date}</td></tr>
+  </table>
 
   <h1>1. Thông tin bãi chôn lấp</h1>
   <table>
@@ -296,7 +345,7 @@ ul li { margin: 3px 0; }
   {legal_section}
 
   <div class="footer">
-    Báo cáo được tạo tự động bởi BCL-CRI Decision Support Tool v1.0 — {today}.<br>
+    Báo cáo được tạo tự động bởi Công cụ hỗ trợ lựa chọn giải pháp đóng bãi chôn lấp CTRSH — {report_date}.<br>
     Kết quả mang tính hỗ trợ quyết định, không thay thế đánh giá kỹ thuật chuyên ngành.
   </div>
 

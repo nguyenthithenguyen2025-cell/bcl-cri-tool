@@ -43,10 +43,15 @@ def _add_table_row(table, label, value, bold_label=True):
     return row
 
 
+def _fmt_meta(meta: dict, key: str) -> str:
+    return meta.get(key) or "—"
+
+
 def export_to_word(
     entry: dict,
     include_solution: bool = True,
     include_legal: bool = True,
+    report_meta: dict | None = None,
 ) -> BytesIO:
     """
     Tạo báo cáo kỹ thuật Word cho một BCL.
@@ -72,24 +77,79 @@ def export_to_word(
     risk = result.get("risk", {})
     solution = result.get("solution", {})
     analysis = generate_technical_analysis(entry)
+    report_meta = report_meta or {}
 
     # ══════════════════════════════════════════
-    # TIÊU ĐỀ
+    # TRANG BÌA
     # ══════════════════════════════════════════
+    org = _fmt_meta(report_meta, "don_vi_thuc_hien")
+    evaluator = _fmt_meta(report_meta, "nguoi_lap")
+    reviewer = _fmt_meta(report_meta, "nguoi_kiem_tra")
+    report_date = report_meta.get("ngay_bao_cao") or date.today().strftime("%d/%m/%Y")
+
+    cover_org = doc.add_paragraph(org.upper() if org != "—" else "ĐƠN VỊ THỰC HIỆN")
+    cover_org.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    cover_org.runs[0].font.bold = True
+    cover_org.runs[0].font.size = Pt(12)
+
+    doc.add_paragraph()
+    doc.add_paragraph()
+
     title = doc.add_paragraph()
     title.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run = title.add_run("BÁO CÁO ĐÁNH GIÁ RỦI RO VÀ GIẢI PHÁP ĐÓNG BÃI CHÔN LẤP")
+    run = title.add_run("BÁO CÁO KỸ THUẬT")
     run.font.bold = True
-    run.font.size = Pt(14)
+    run.font.size = Pt(16)
     run.font.color.rgb = RGBColor(0x1f, 0x77, 0xb4)
 
     sub = doc.add_paragraph()
     sub.alignment = WD_ALIGN_PARAGRAPH.CENTER
     sub.add_run(
-        f"Chỉ số Rủi ro Tổng hợp (CRI) — Đề tài TNMT.2024.05.05"
-    ).font.size = Pt(11)
+        "ĐÁNH GIÁ RỦI RO VÀ LỰA CHỌN GIẢI PHÁP CAN THIỆP, ĐÓNG BÃI CHÔN LẤP CTRSH"
+    ).font.size = Pt(13)
 
-    doc.add_paragraph(f"Ngày lập báo cáo: {date.today().strftime('%d/%m/%Y')}").runs[0].font.italic = True
+    bcl_title = doc.add_paragraph(info.get("ten_bcl", "Bãi chôn lấp"))
+    bcl_title.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    bcl_title.runs[0].font.bold = True
+    bcl_title.runs[0].font.size = Pt(13)
+
+    doc.add_paragraph()
+    cover_table = doc.add_table(rows=0, cols=2)
+    cover_table.style = "Table Grid"
+    for label, value in [
+        ("Tỉnh/Thành phố", info.get("tinh")),
+        ("Xã/Phường", info.get("xa")),
+        ("Đơn vị thực hiện", org),
+        ("Người lập", evaluator),
+        ("Người kiểm tra", reviewer),
+        ("Ngày lập báo cáo", report_date),
+        ("Phương pháp", "Chỉ số Rủi ro Tổng hợp (CRI) — Đề tài TNMT.2024.05.05"),
+    ]:
+        _add_table_row(cover_table, label, value)
+
+    doc.add_paragraph()
+    note = doc.add_paragraph(
+        "Báo cáo được tạo từ Công cụ hỗ trợ lựa chọn giải pháp đóng bãi chôn lấp CTRSH. "
+        "Kết quả mang tính hỗ trợ quyết định và cần được kiểm chứng bằng khảo sát, thiết kế "
+        "kỹ thuật và thẩm định theo quy định hiện hành khi sử dụng cho dự án đầu tư."
+    )
+    note.runs[0].font.italic = True
+    note.runs[0].font.size = Pt(10)
+    doc.add_page_break()
+
+    # ══════════════════════════════════════════
+    # THÔNG TIN BÁO CÁO
+    # ══════════════════════════════════════════
+    _heading(doc, "Thông tin báo cáo", level=1)
+    report_info = doc.add_table(rows=0, cols=2)
+    report_info.style = "Table Grid"
+    for label, value in [
+        ("Đơn vị thực hiện", org),
+        ("Người lập", evaluator),
+        ("Người kiểm tra", reviewer),
+        ("Ngày lập báo cáo", report_date),
+    ]:
+        _add_table_row(report_info, label, value)
     doc.add_paragraph()
 
     # ══════════════════════════════════════════
@@ -107,6 +167,8 @@ def export_to_word(
         ("Tên bãi chôn lấp", info.get("ten_bcl")),
         ("Tỉnh/Thành phố", info.get("tinh")),
         ("Xã/Phường", info.get("xa")),
+        ("Vĩ độ", info.get("toa_do_lat")),
+        ("Kinh độ", info.get("toa_do_lon")),
         ("Loại BCL", "Không hợp vệ sinh (BCL-KHVS)" if info.get("loai_bcl") == "KHVS" else "Hợp vệ sinh (BCL-HVS)"),
         ("Diện tích (ha)", info.get("dien_tich_ha")),
         ("Thể tích ước tính (m³)", info.get("the_tich_m3")),
@@ -275,8 +337,8 @@ def export_to_word(
     # ── Footer
     doc.add_paragraph()
     footer_p = doc.add_paragraph(
-        f"Báo cáo được tạo tự động bởi BCL-CRI Decision Support Tool v1.0 — "
-        f"{date.today().strftime('%d/%m/%Y')}. "
+        "Báo cáo được tạo tự động bởi Công cụ hỗ trợ lựa chọn giải pháp đóng bãi chôn lấp CTRSH — "
+        f"{report_date}. "
         "Kết quả mang tính hỗ trợ quyết định, không thay thế đánh giá kỹ thuật chuyên ngành."
     )
     footer_p.runs[0].font.italic = True

@@ -5,6 +5,8 @@ import json
 import unittest
 from pathlib import Path
 
+import openpyxl
+
 from core.calculator import calculate_cri
 from core.classifier import classify_and_recommend, generate_technical_analysis
 from export.excel_export import export_to_excel
@@ -69,10 +71,17 @@ class CoreCriTest(unittest.TestCase):
 class ExportTest(unittest.TestCase):
     def test_exports_return_non_empty_files(self):
         entry = _sample_entry()
+        report_meta = {
+            "don_vi_thuc_hien": "Đơn vị kiểm thử",
+            "nguoi_lap": "Người lập A",
+            "nguoi_kiem_tra": "Người kiểm tra B",
+            "ngay_bao_cao": "07/06/2026",
+        }
 
-        xlsx = export_to_excel([entry]).getvalue()
-        html = export_to_html(entry)
-        docx = export_to_word(entry).getvalue()
+        excel_buf = export_to_excel([entry], report_meta=report_meta)
+        xlsx = excel_buf.getvalue()
+        html = export_to_html(entry, report_meta=report_meta)
+        docx = export_to_word(entry, report_meta=report_meta).getvalue()
 
         self.assertGreater(len(xlsx), 5000)
         self.assertGreater(len(html), 5000)
@@ -80,7 +89,13 @@ class ExportTest(unittest.TestCase):
         self.assertTrue(xlsx.startswith(b"PK"))
         self.assertTrue(html.startswith(b"<!DOCTYPE html>"))
         self.assertIn("BÁO CÁO".encode("utf-8"), html)
+        self.assertIn("Đơn vị kiểm thử".encode("utf-8"), html)
         self.assertTrue(docx.startswith(b"PK"))
+
+        workbook = openpyxl.load_workbook(excel_buf)
+        self.assertIn("0. Thông tin báo cáo", workbook.sheetnames)
+        report_ws = workbook["0. Thông tin báo cáo"]
+        self.assertEqual(report_ws["B3"].value, "Đơn vị kiểm thử")
 
 
 if __name__ == "__main__":
