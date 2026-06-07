@@ -67,6 +67,7 @@ def export_to_word(
     info = entry.get("info", {})
     result = entry.get("result", {})
     scores = entry.get("scores", {})
+    missing_notes = entry.get("missing_notes", {})
     risk = result.get("risk", {})
     solution = result.get("solution", {})
 
@@ -172,9 +173,9 @@ def export_to_word(
         # Bảng điểm 14 thông số
         _heading(doc, "2.2. Điểm 14 thông số CRI", level=2)
 
-        t_scores = doc.add_table(rows=1, cols=4)
+        t_scores = doc.add_table(rows=1, cols=5)
         t_scores.style = "Table Grid"
-        for i, h_text in enumerate(["Mã", "Tên thông số", "Nhóm", "Điểm"]):
+        for i, h_text in enumerate(["Mã", "Tên thông số", "Nhóm", "Điểm", "Lý do thiếu dữ liệu"]):
             t_scores.rows[0].cells[i].text = h_text
             t_scores.rows[0].cells[i].paragraphs[0].runs[0].font.bold = True
 
@@ -189,6 +190,7 @@ def export_to_word(
             row.cells[1].text = p["name"]
             row.cells[2].text = p["group"]
             row.cells[3].text = val_str
+            row.cells[4].text = missing_notes.get(pid, "—") if assumed else "—"
             if assumed:
                 for c in row.cells:
                     for para in c.paragraphs:

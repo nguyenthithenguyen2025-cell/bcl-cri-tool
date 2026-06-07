@@ -45,6 +45,7 @@ def export_to_html(
     info = entry.get("info", {})
     result = entry.get("result", {})
     scores = entry.get("scores", {})
+    missing_notes = entry.get("missing_notes", {})
     risk = result.get("risk", {})
     solution = result.get("solution", {})
     assumed_max = result.get("assumed_max", [])
@@ -165,7 +166,8 @@ ul li { margin: 3px 0; }
                 f"<tr><td>{pid}</td>"
                 f"<td{cls}>{p['name']}{note}</td>"
                 f"<td>{p['group']}</td>"
-                f"<td style='text-align:center;'>{score_str}</td></tr>\n"
+                f"<td style='text-align:center;'>{score_str}</td>"
+                f"<td>{missing_notes.get(pid, '—') if is_assumed else '—'}</td></tr>\n"
             )
 
         cri_section = f"""
@@ -185,7 +187,7 @@ ul li { margin: 3px 0; }
 
 <h2>2.2. Điểm 14 thông số CRI</h2>
 <table>
-  <tr><th>Mã</th><th>Tên thông số</th><th>Nhóm</th><th>Điểm</th></tr>
+  <tr><th>Mã</th><th>Tên thông số</th><th>Nhóm</th><th>Điểm</th><th>Lý do thiếu dữ liệu</th></tr>
   {score_rows}
 </table>
 <p class="assumed">(*) Thông số được gán điểm 1,00 do thiếu dữ liệu (nguyên tắc thận trọng).</p>

@@ -52,10 +52,15 @@
 | `.streamlit/config.toml`, `README.md` | Cập nhật theme nhẹ và tên app chính thức: "Công cụ hỗ trợ lựa chọn giải pháp đóng bãi chôn lấp CTRSH" |
 | `app.py`, `pages/0_Tổng_quan_công_cụ.py` | Chuyển sang `st.navigation()` để đổi mục đầu tiên từ `app` thành "Tổng quan công cụ" |
 | `app.py`, `pages/4_Kết_quả.py` | Đổi nhãn mục 4 thành "Lựa chọn giải pháp can thiệp, đóng bãi" |
+| `utils/validators.py` | Bổ sung kiểm tra năm hoạt động, cặp tọa độ, tọa độ trong phạm vi Việt Nam và cảnh báo dữ liệu vật lý bất thường |
+| `pages/2_Khai_báo_BCL.py` | Không tự lưu hồ sơ nếu còn lỗi dữ liệu bắt buộc; hiển thị cảnh báo dữ liệu bất thường |
+| `pages/3_Nhập_CRI.py` | Yêu cầu nhập lý do cho từng thông số CRI thiếu trước khi lưu kết quả vào danh sách BCL |
+| `export/html_export.py`, `export/word_export.py`, `export/excel_export.py` | Bổ sung lý do thiếu dữ liệu vào báo cáo đầu ra |
+| `tests/test_validators.py` | Thêm kiểm thử validator dữ liệu đầu vào và lý do thiếu dữ liệu |
 
 **Kiểm tra đã chạy:**
-- `python -m unittest discover -s tests -v`: đạt 4/4 test.
-- Biên dịch cú pháp 24 file Python: đạt.
+- `python -m unittest discover -s tests -v`: đạt 9/9 test.
+- Biên dịch cú pháp 27 file Python: đạt.
 - Dữ liệu mẫu PL2.4: CRI = 0,6647; Cấp 3; GP 2.2.
 - Xuất Excel/HTML/Word trong bộ nhớ: đạt.
 - Streamlit cục bộ `http://localhost:8501`: HTTP 200.

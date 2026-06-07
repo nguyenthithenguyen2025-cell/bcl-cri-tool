@@ -163,6 +163,7 @@ def _sheet_results(wb, entries: list[dict]):
         ("Hạng mục bắt buộc (tóm tắt)", "result.solution.mandatory_items"),
         ("Thời gian quản lý sau đóng", "result.solution.monitoring_period"),
         ("Căn cứ pháp lý", "result.solution.legal_basis"),
+        ("Thông số thiếu dữ liệu", "missing_notes"),
     ]
 
     row = 2
@@ -188,6 +189,13 @@ def _sheet_results(wb, entries: list[dict]):
                     val = solution.get(parts[2])
                     if isinstance(val, list):
                         val = "\n".join(f"• {x}" for x in val)
+            elif parts[0] == "missing_notes":
+                missing_notes = entry.get("missing_notes", {})
+                val = (
+                    "\n".join(f"{pid}: {note}" for pid, note in missing_notes.items() if note)
+                    if missing_notes
+                    else "—"
+                )
 
             _header_cell(ws, row, 1, label, bg="ecf0f1", fg="2c3e50", bold=False)
             ws.cell(row, 2, value=val)

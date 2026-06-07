@@ -8,6 +8,7 @@ from core.classifier import classify_and_recommend, get_top_risk_params
 from utils.session import add_bcl, update_bcl, get_all_bcl, get_bcl, set_active_bcl
 from utils.sidebar import render_sidebar
 from utils.ui import apply_global_styles, render_page_header
+from utils.validators import validate_missing_notes, validate_scores
 
 apply_global_styles()
 render_sidebar()
@@ -264,8 +265,19 @@ result["solution"] = classify["solution"]
 # Auto-lưu vào bcl_list khi ít nhất 1 điểm đã được chọn
 n_selected = sum(1 for s in all_scores.values() if s is not None)
 n_missing = 14 - n_selected
+score_validation = validate_scores(all_scores)
+missing_note_errors = (
+    validate_missing_notes(score_validation["missing_ids"], all_notes)
+    if n_selected > 0
+    else []
+)
+can_save_result = (
+    n_selected > 0
+    and not score_validation["errors"]
+    and not missing_note_errors
+)
 
-if n_selected > 0:
+if can_save_result:
     if st.session_state.get("_bcl_active_editing_id"):
         update_bcl(
             st.session_state["_bcl_active_editing_id"],
@@ -291,10 +303,15 @@ color = classify["risk"]["color"]
 st.markdown(f"### Kết quả CRI — {saved_info.get('ten_bcl', '(chưa đặt tên)')}")
 
 if n_missing > 0:
-    st.caption(
-        f"⚠️ {n_missing}/14 thông số chưa chọn — đang gán điểm 1,00 (nguyên tắc thận trọng). "
-        "CRI hiển thị có thể cao hơn thực tế."
+    st.warning(
+        f"{n_missing}/14 thông số chưa chọn. CRI bên dưới là kết quả tạm tính theo nguyên tắc "
+        "thận trọng, trong đó thông số thiếu được gán điểm 1,00. Cần nhập lý do cho từng "
+        "thông số thiếu trước khi lưu kết quả vào hồ sơ."
     )
+    if missing_note_errors and n_selected > 0:
+        with st.expander("Các lý do thiếu dữ liệu cần bổ sung", expanded=True):
+            for err in missing_note_errors:
+                st.error(err)
 
 col_r1, col_r2, col_r3, col_r4 = st.columns(4)
 with col_r1:
@@ -325,10 +342,15 @@ if top3 and n_selected > 0:
             f"đóng góp = {t['contribution']:.4f}"
         )
 
-if n_selected > 0:
+if can_save_result:
     st.info(
         f"✅ Dữ liệu lưu tự động. "
-        "Chuyển sang trang **Kết quả & Phân tích** để xem biểu đồ chi tiết."
+        "Chuyển sang trang **Lựa chọn giải pháp can thiệp, đóng bãi** để xem biểu đồ chi tiết."
+    )
+elif n_selected > 0:
+    st.warning(
+        "Kết quả đang ở trạng thái xem trước và chưa được lưu vào danh sách BCL. "
+        "Hãy bổ sung lý do thiếu dữ liệu cho các thông số chưa chọn."
     )
 else:
     st.info("Chọn ít nhất một thông số để lưu kết quả vào danh sách BCL.")

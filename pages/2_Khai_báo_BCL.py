@@ -2,7 +2,7 @@
 """Trang 2 — Khai báo thông tin cơ bản bãi chôn lấp."""
 
 import streamlit as st
-from utils.validators import validate_bcl_info
+from utils.validators import get_bcl_info_warnings, validate_bcl_info
 from utils.sidebar import render_sidebar
 from utils.session import get_all_bcl, get_bcl, set_active_bcl
 from utils.ui import apply_global_styles, render_page_header
@@ -231,12 +231,22 @@ info = {
 }
 
 errors = validate_bcl_info(info)
+data_warnings = get_bcl_info_warnings(info)
 
 if ten_bcl.strip():
-    st.session_state["_bcl_saved_info"] = info
     editing_id = st.session_state.get("_bcl_active_editing_id")
 
-    if loai_bcl == "HVS":
+    if errors:
+        for err in errors:
+            st.warning(err)
+        st.info("Hồ sơ chưa được lưu tự động do còn lỗi dữ liệu bắt buộc.")
+    else:
+        st.session_state["_bcl_saved_info"] = info
+
+        for warn in data_warnings:
+            st.warning(warn)
+
+    if not errors and loai_bcl == "HVS":
         from core.classifier import classify_and_recommend
         from utils.session import add_bcl, update_bcl, get_bcl as _get_bcl
 
@@ -263,7 +273,7 @@ if ten_bcl.strip():
                 f"Giải pháp: **{sol_name}**. "
                 "Chuyển sang trang **Kết quả** để xem chi tiết."
             )
-    else:
+    elif not errors:
         # BCL-KHVS: cập nhật info của BCL hiện tại nếu đã có trong danh sách
         if editing_id:
             from utils.session import update_bcl, get_bcl as _get_bcl
@@ -275,10 +285,6 @@ if ten_bcl.strip():
                 f"✅ Lưu tự động — **{ten_bcl}** ({tinh}) — BCL-KHVS. "
                 "Chuyển sang trang **Nhập thông số CRI** để đánh giá."
             )
-
-    if errors:
-        for err in errors:
-            st.warning(err)
 else:
     st.info("Nhập tên bãi chôn lấp để bắt đầu lưu tự động.")
 
