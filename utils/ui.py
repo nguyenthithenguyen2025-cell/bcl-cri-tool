@@ -164,6 +164,16 @@ def _img_to_base64(path: Path) -> tuple[str, str]:
 
 def render_branding_banner() -> None:
     """Hiển thị banner nhận diện chuyên nghiệp ở đầu trang."""
+    logos = get_available_branding_logos()
+    logo_html = ""
+    if logos:
+        mime, data = _img_to_base64(logos[0]["path"])
+        logo_html = (
+            f'<img src="data:{mime};base64,{data}" '
+            'style="height:56px;max-width:180px;object-fit:contain;'
+            'display:block;filter:brightness(0) invert(1);" alt="Logo"/>'
+        )
+
     st.markdown(
         f"""
 <div style="
@@ -177,10 +187,9 @@ def render_branding_banner() -> None:
     margin-bottom:1.5rem;
     box-shadow:0 3px 12px rgba(13,46,69,0.28);
 ">
-  <div style="min-width:0;">
-    <div style="color:rgba(255,255,255,0.62);font-size:0.67rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.1rem;">Đơn vị chủ trì</div>
-    <div style="color:#ffffff;font-size:1.0rem;font-weight:700;line-height:1.3;">{HOST_ORG}</div>
-    <div style="color:rgba(255,255,255,0.72);font-size:0.80rem;margin-top:0.12rem;">{PROJECT_NAME}</div>
+  <div style="min-width:0;display:flex;align-items:center;gap:0.85rem;">
+    {logo_html}
+    <div style="color:rgba(255,255,255,0.72);font-size:0.80rem;">{PROJECT_NAME}</div>
   </div>
   <div style="text-align:right;flex-shrink:0;padding-left:1rem;border-left:1px solid rgba(255,255,255,0.2);">
     <div style="color:rgba(255,255,255,0.62);font-size:0.67rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.1rem;">Công cụ hỗ trợ</div>
@@ -213,7 +222,7 @@ def render_page_footer() -> None:
     Căn cứ pháp lý: Điều 32 TT 02/2022/TT-BTNMT &nbsp;·&nbsp; QCVN 96:2025/BNNMT &nbsp;·&nbsp; TCVN 13766:2023
   </div>
   <div style="color:#5a7085;font-size:0.73rem;text-align:right;">
-    {APP_SHORT_NAME} v{APP_VERSION} &nbsp;·&nbsp; {HOST_ORG} &nbsp;·&nbsp; 2026
+    {APP_SHORT_NAME} v{APP_VERSION} &nbsp;·&nbsp; 2026
   </div>
 </div>
 """,

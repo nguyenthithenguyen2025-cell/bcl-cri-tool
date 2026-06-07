@@ -22,6 +22,14 @@ from utils.ui import (
 def render_sidebar():
     """Hiển thị sidebar thống nhất: danh sách BCL và căn cứ pháp lý."""
     with st.sidebar:
+        logos = get_available_branding_logos()
+        if logos:
+            mime, data = _img_to_base64(logos[0]["path"])
+            st.markdown(
+                f'<img src="data:{mime};base64,{data}" '
+                'style="max-width:140px;margin-bottom:0.4rem;display:block;" alt="Logo"/>',
+                unsafe_allow_html=True,
+            )
         st.markdown(f"### {APP_SHORT_NAME}")
         st.caption(APP_NAME)
         st.caption(f"Phiên bản {APP_VERSION} | {PROJECT_NAME}")
@@ -62,7 +70,7 @@ def render_sidebar():
         st.caption("QCVN 96:2025/BNNMT")
         st.caption("TCVN 13766:2023")
         st.caption(PROJECT_NAME)
-        st.caption(f"{HOST_ORG}, 2026")
+        st.caption("2026")
 
         if n > 0:
             st.divider()
