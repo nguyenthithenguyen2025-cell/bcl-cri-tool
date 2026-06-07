@@ -1,10 +1,11 @@
 # HANDOFF NOTE — BCL-CRI Decision Support Tool
 
-**Ngày cập nhật:** 2026-06-07 (Phiên 4)
+**Ngày cập nhật:** 2026-06-07 (Phiên 5)
 **Dự án:** Công cụ Hỗ trợ Quyết định Đóng bãi Chôn lấp CTRSH
 **Thư mục dự án:** `D:\1. AI_landfill\landfill-cri-tool\`
-**Git:** Branch `master` — Commit hiện tại: `8e5439d`
+**Git:** Branch `master` — Commit hiện tại: `54b7f05`
 **GitHub:** https://github.com/nguyenthithenguyen2025-cell/bcl-cri-tool
+**App URL:** https://bcl-cri-tool-f7bzdcw6lzg6yz92ouerqz.streamlit.app
 
 ---
 
@@ -16,65 +17,61 @@
 | Sprint 2 | Giao diện 6 trang Streamlit | ✅ HOÀN THÀNH |
 | Sprint 3 | Biểu đồ (6 loại) + Export Excel/Word | ✅ HOÀN THÀNH |
 | Sprint 4 | Test + Sửa lỗi + Git commit | ✅ HOÀN THÀNH |
-| Sprint 5 | HTML demo để kiểm tra trước | ✅ HOÀN THÀNH (Phiên 3) |
-| Sprint 6 | Deploy GitHub + Streamlit Cloud | ✅ HOÀN THÀNH (Phiên 4) |
+| Sprint 5 | HTML demo để kiểm tra trước | ✅ HOÀN THÀNH |
+| Sprint 6 | Deploy GitHub + Streamlit Cloud | ✅ HOÀN THÀNH |
+| Phiên 5 | Tinh chỉnh UI/UX theo phản hồi | ✅ HOÀN THÀNH |
 
-**Tóm tắt:** App Streamlit hoàn chỉnh, đã deploy thành công. Test thủ công 5 bước không có lỗi.
-
-**URL công khai:** https://bcl-cri-tool-f7bzdcw6lzg6yz92ouerqz.streamlit.app  
-**GitHub:** https://github.com/nguyenthithenguyen2025-cell/bcl-cri-tool  
 **Git working tree hiện tại:** Sạch — tất cả file đã commit và push.
 
 ---
 
-## 2. Những gì vừa hoàn thành (Phiên 3 — 2026-06-07)
+## 2. Lịch sử thay đổi theo phiên
 
-### 2.1 Tạo file HTML demo — `bcl_cri_demo.html`
+### Phiên 5 — 2026-06-07 (mới nhất)
 
-**File:** `D:\1. AI_landfill\landfill-cri-tool\bcl_cri_demo.html`
-**Mục đích:** Kiểm tra logic CRI và giao diện mà không cần cài Python/Streamlit.
-**Cách mở:** Double-click → mở bằng Chrome/Edge/Firefox. Cần internet để biểu đồ Chart.js hiển thị.
+**Commit:** `54b7f05` — UX: show content on all pages even when no BCL data exists
 
-**Tính năng trong demo HTML:**
+#### 2.1 Sửa giao diện `pages/2_Khai_báo_BCL.py`
 
-| Tính năng | Có |
-|-----------|-----|
-| Form khai báo BCL (KHVS/HVS) với 10 trường | ✅ |
-| Nút nạp dữ liệu mẫu PL2.4 (cả BCL info + 14 điểm) | ✅ |
-| Form nhập 14 thông số CRI (3 nhóm H/P/R) | ✅ |
-| Màu điểm thay đổi theo mức (xanh/vàng/cam/đỏ) | ✅ |
-| Tính CRI đúng công thức `H^0.28 × P^0.40 × R^0.32` | ✅ |
-| Phân loại 4 cấp rủi ro + màu tương ứng | ✅ |
-| Top 3 thông số rủi ro cao nhất | ✅ |
-| Biểu đồ radar 14 thông số (Chart.js 4.4.0) | ✅ |
-| Biểu đồ cột H/P/R | ✅ |
-| 4 nhóm giải pháp khuyến nghị đầy đủ (GP1/2.1/2.2/3) | ✅ |
-| BCL-HVS: bỏ qua CRI, đi thẳng đến giải pháp | ✅ |
-| Giao diện tiếng Việt, responsive (mobile/desktop) | ✅ |
+| Thay đổi | Chi tiết |
+|----------|---------|
+| Đổi tiêu đề mục 1 | "Thông tin định danh" → **"Thông tin chung về bãi chôn lấp"** |
+| Xóa trường Huyện/Quận/Thị xã | Bỏ `huyen` khỏi form và khỏi dict lưu kết quả |
+| Sửa nhãn trường Xã | "Xã / Phường / Thị trấn" → **"Xã / Phường"** |
 
-**Kết quả kỳ vọng khi nạp mẫu:** H=0,6250 | P=0,6658 | R=0,7000 | CRI=0,6647 → Cấp 3 → GP 2.2 ✅
+#### 2.2 Cải thiện UX khi chưa có dữ liệu — 4 trang
 
-**Demo HTML KHÔNG có (chỉ có trong Streamlit app):**
-- Trang 1 (Giới thiệu phương pháp)
-- Quản lý nhiều BCL cùng lúc
-- Trang 5 — So sánh nhiều BCL
-- Trang 6 — Xuất báo cáo Excel/Word
-- Biểu đồ gauge và heatmap
-- Session state (dữ liệu tồn tại khi chuyển trang)
+**Vấn đề cũ:** Trang 3, 4, 5, 6 hoàn toàn trắng trơn nếu người dùng chưa khai báo BCL, gây bất tiện và khó hiểu.
 
-### 2.2 Cập nhật `.gitignore`
+**Giải pháp đã áp dụng:**
 
-Thêm `bcl_cri_demo.html` vào `.gitignore` để không đưa file demo vào git repository (file này chỉ dùng để kiểm tra cục bộ).
+| Trang | Thay đổi |
+|-------|---------|
+| **Trang 3 — Nhập CRI** | Bỏ `st.stop()` — hiện đầy đủ form 14 thông số ngay cả khi chưa khai báo BCL; thay cảnh báo cứng bằng thông báo nhẹ (info) |
+| **Trang 4 — Kết quả** | Giữ `st.stop()` nhưng thêm mô tả các nội dung sẽ xuất hiện (thẻ CRI, 4 biểu đồ, phân tích, giải pháp) |
+| **Trang 5 — So sánh** | Giữ `st.stop()` nhưng thêm mô tả (bảng xếp hạng, bộ lọc, 2 biểu đồ, xuất Excel) |
+| **Trang 6 — Xuất báo cáo** | Giữ `st.stop()` nhưng thêm mô tả 3 định dạng xuất (Excel, Word, PDF) |
 
-```gitignore
-__pycache__/
-*.pyc
-*.pyo
-.env
-streamlit_log.txt
-assets/logo.png
-bcl_cri_demo.html
-```
+---
+
+### Phiên 4 — 2026-06-07
+
+- Commit 2 file tồn đọng (`.gitignore`, `HANDOFF.md`)
+- Tạo GitHub repo public: `nguyenthithenguyen2025-cell/bcl-cri-tool`
+- Push toàn bộ code lên GitHub qua `gh repo create`
+- Deploy lên Streamlit Community Cloud (thao tác web thủ công)
+- Test thủ công 5 bước — không có lỗi
+- URL app: https://bcl-cri-tool-f7bzdcw6lzg6yz92ouerqz.streamlit.app
+
+### Phiên 3 — 2026-06-07
+
+- Tạo file HTML demo `bcl_cri_demo.html` (không track trong git)
+- Cập nhật `.gitignore`
+
+### Phiên 1–2 — 2026-06-07
+
+- Xây dựng toàn bộ app Streamlit (Sprint 1–4): 31 files
+- Core logic, giao diện 6 trang, 6 biểu đồ, xuất Excel/Word
 
 ---
 
@@ -84,7 +81,7 @@ bcl_cri_demo.html
 landfill-cri-tool/
 ├── app.py                          ✅ Entry point Streamlit
 ├── requirements.txt                ✅ streamlit, plotly, pandas, openpyxl, python-docx
-├── .streamlit/config.toml          ✅ Theme xanh lá, layout wide
+├── .streamlit/config.toml          ✅ Theme xanh dương, layout wide
 ├── .gitattributes                  ✅ UTF-8/LF cho file tiếng Việt
 ├── .gitignore                      ✅ Loại trừ __pycache__, .env, bcl_cri_demo.html...
 │
@@ -101,8 +98,8 @@ landfill-cri-tool/
 ├── pages/
 │   ├── __init__.py
 │   ├── 1_Giới_thiệu.py             ✅ Trang giới thiệu + hướng dẫn
-│   ├── 2_Khai_báo_BCL.py           ✅ Form nhập thông tin BCL (HVS/KHVS)
-│   ├── 3_Nhập_CRI.py               ✅ Form 14 thông số CRI — đã sửa lỗi trùng BCL
+│   ├── 2_Khai_báo_BCL.py           ✅ Form nhập thông tin BCL — đã tinh chỉnh Phiên 5
+│   ├── 3_Nhập_CRI.py               ✅ Form 14 thông số CRI — hiện cả khi chưa có BCL info
 │   ├── 4_Kết_quả.py                ✅ Dashboard + 4 biểu đồ + giải pháp
 │   ├── 5_So_sánh_BCL.py            ✅ Bảng xếp hạng + biểu đồ so sánh nhiều BCL
 │   └── 6_Xuất_báo_cáo.py           ✅ Xuất Excel (3 sheet) + Word
@@ -116,8 +113,8 @@ landfill-cri-tool/
 │
 ├── export/
 │   ├── __init__.py
-│   ├── excel_export.py             ✅ export_to_excel() → BytesIO (8,532 bytes)
-│   └── word_export.py              ✅ export_to_word() → BytesIO (39,197 bytes)
+│   ├── excel_export.py             ✅ export_to_excel() → BytesIO
+│   └── word_export.py              ✅ export_to_word() → BytesIO
 │
 ├── data/
 │   └── sample_data.json            ✅ Dữ liệu mẫu PL2.4
@@ -135,83 +132,22 @@ landfill-cri-tool/
 
 ---
 
-## 4. Bước tiếp theo — Deploy (ưu tiên cao nhất)
+## 4. Vấn đề còn tồn đọng & việc cần làm tiếp
 
-### Bước 0: Commit 2 file thay đổi chưa vào git
-
-```bash
-cd D:\1. AI_landfill\landfill-cri-tool
-git add .gitignore HANDOFF.md
-git commit -m "Update .gitignore and HANDOFF after Sprint 5 (HTML demo)"
-```
-
-### Bước 1: Push lên GitHub
-
-**Cách A — Qua GitHub CLI (nhanh nhất, nếu đã cài `gh`):**
-```bash
-gh repo create bcl-cri-tool --public --source=. --remote=origin --push
-```
-
-**Cách B — Thủ công:**
-1. Truy cập https://github.com/new
-2. Tạo repo tên `bcl-cri-tool` (Public, **không** tick "Add a README file")
-3. Copy URL repo (dạng `https://github.com/TEN_USER/bcl-cri-tool.git`)
-4. Chạy lệnh:
-```bash
-git remote add origin https://github.com/TEN_USER/bcl-cri-tool.git
-git push -u origin master
-```
-
-> **Lưu ý tên branch:** Local đang dùng `master`. Nếu muốn đổi sang `main` (convention GitHub mới):
-> ```bash
-> git branch -m master main
-> git push -u origin main
-> ```
-
-**Kiểm tra thành công:** Truy cập `https://github.com/TEN_USER/bcl-cri-tool` — phải thấy 31 files.
-
-### Bước 2: Deploy trên Streamlit Community Cloud
-
-1. Truy cập https://share.streamlit.io
-2. Đăng nhập bằng tài khoản GitHub (cùng tài khoản vừa push)
-3. Nhấn **New app**
-4. Điền:
-   - Repository: `TEN_USER/bcl-cri-tool`
-   - Branch: `master` (hoặc `main` nếu đã đổi)
-   - Main file path: `app.py`
-5. Nhấn **Deploy** → chờ ~3-5 phút
-6. URL sẽ có dạng: `https://bcl-cri-tool.streamlit.app`
-
-**Không cần cấu hình thêm:** `requirements.txt` được đọc tự động. Tên file tiếng Việt hoạt động bình thường trên Linux nhờ `.gitattributes`.
-
-### Bước 3: Kiểm tra sau deploy
-
-Luồng test đầu đủ sau khi app lên cloud:
-
-1. **Trang 2 — Khai báo BCL:** Nạp dữ liệu mẫu → Lưu BCL → xác nhận chuyển sang Trang 3
-2. **Trang 3 — Nhập CRI:** Nạp điểm mẫu → Tính CRI → kiểm tra: CRI ≈ 0,665, Cấp 3, GP 2.2
-3. **Trang 3 — Kiểm tra lỗi trùng BCL:** Thay đổi 1 thông số → Tính lại → BCL trong danh sách vẫn chỉ có 1 (không nhân đôi)
-4. **Trang 4 — Kết quả:** Xác nhận 4 biểu đồ (radar, gauge, bar, heatmap) hiển thị
-5. **Trang 6 — Xuất báo cáo:** Tải Excel → kiểm tra 3 sheet. Tải Word → kiểm tra nội dung
+| # | Vấn đề / Tính năng | Mức ưu tiên | Ghi chú |
+|---|---------------------|-------------|---------|
+| 1 | **Logo ứng dụng** | Thấp | Đặt file tại `assets/logo.png` (~200×200px, nền trắng/trong suốt) → `utils/sidebar.py` tự nhận |
+| 2 | **Điểm mẫu PL2.4 chênh lệch nhỏ** | Thấp | CRI = 0,6647 vs 0,662 gốc — đúng cấp, đúng giải pháp. Cập nhật `data/sample_data.json` khi có bảng điểm gốc chính xác |
+| 3 | **PDF export** | Thấp | Chưa implement — hiện người dùng xuất từ Word (File → Print → Save as PDF) |
+| 4 | **Nội dung Trang 1 — Giới thiệu** | Trung bình | Có thể bổ sung sơ đồ quy trình, mô tả phương pháp CRI chi tiết hơn |
+| 5 | **Tinh chỉnh nội dung form Trang 2** | Đang làm | Người dùng đang chỉnh từng trường theo yêu cầu thực tế |
+| 6 | **Bản đồ phân bố BCL (Trang 5)** | Thấp — v1.1 | Cần Mapbox token hoặc OpenStreetMap; tọa độ GPS tùy chọn |
+| 7 | **Lưu dữ liệu SQLite** | Thấp — v1.2 | Session state mất khi đóng tab; giải pháp tạm: xuất Excel ngay sau nhập |
+| 8 | **Phân quyền người dùng** | Thấp — v2.0 | Dùng `st-authenticator` nếu cần |
 
 ---
 
-## 5. Tùy chọn sau deploy (ưu tiên thấp)
-
-### Thêm logo ứng dụng
-
-Đặt file ảnh tại `assets/logo.png` (nền trắng hoặc trong suốt, ~200×200px).
-`utils/sidebar.py` đã có code hiển thị, sẽ tự nhận ngay sau khi có file.
-Sau đó commit và push (Streamlit Cloud tự cập nhật khi repo thay đổi).
-
-### Điều chỉnh điểm mẫu PL2.4
-
-Hiện tại: điểm mẫu cho CRI = 0,6647; PL2.4 gốc: CRI = 0,662.
-Chênh lệch nhỏ, vẫn đúng Cấp 3 → GP 2.2. Khi có bảng điểm gốc, cập nhật `data/sample_data.json`.
-
----
-
-## 6. Chi tiết kỹ thuật quan trọng
+## 5. Chi tiết kỹ thuật quan trọng
 
 ### Công thức tính CRI
 
@@ -247,7 +183,7 @@ st.session_state["bcl_list"] = [
         "result": {
             "H": float, "P": float, "R": float, "CRI": float,
             "risk": {"level": 1-4, "label": str, "color": hex_str},
-            "solution": dict,    # keys: id, name, short_name, mandatory_items, ...
+            "solution": dict,
         },
         "created_at": "ISO datetime",
     }
@@ -260,8 +196,8 @@ st.session_state["bcl_list"] = [
 "_cri_notes_draft"        = dict   # Draft lý do thiếu
 ```
 
-**Lưu ý quan trọng về lỗi trùng BCL (đã sửa Sprint 4):**
-Sau `add_bcl()` trong `pages/3_Nhập_CRI.py` (dòng ~257–267), bắt buộc phải gán:
+**Lưu ý quan trọng — tránh trùng BCL:**  
+Sau `add_bcl()` trong `pages/3_Nhập_CRI.py`, bắt buộc gán:
 ```python
 st.session_state["_bcl_active_editing_id"] = bcl_id
 ```
@@ -293,28 +229,15 @@ export_to_word(entry: dict, include_solution=True, include_legal=True) -> BytesI
 
 ---
 
-## 7. Vấn đề chưa giải quyết
+## 6. Lưu ý vận hành
 
-| Vấn đề | Mức độ | Ghi chú |
-|--------|--------|---------|
-| Commit 2 file chưa vào git | **Cao** | `.gitignore`, `HANDOFF.md` — làm trước khi push |
-| Deploy GitHub + Streamlit Cloud | **Cao** | Xem chi tiết Bước 1-2 ở trên |
-| Test thủ công trình duyệt sau deploy | Trung bình | Xem Bước 3 ở trên |
-| Điểm mẫu PL2.4 chênh lệch nhỏ | Thấp | CRI = 0,6647 vs 0,662 — đúng cấp rủi ro |
-| Logo ứng dụng | Thấp | Đặt `assets/logo.png` là xong |
-| PDF export | Thấp | Chưa implement — người dùng xuất từ Word |
-
----
-
-## 8. Lưu ý vận hành
-
-- **Windows `WinError 10054`** trong `streamlit_log.txt`: Noise bình thường trên Windows (ProactorEventLoop), không xuất hiện trên Linux/Streamlit Cloud, không ảnh hưởng chức năng.
 - **Session state mất khi refresh:** Hành vi mặc định của Streamlit. Người dùng cần xuất Excel/Word trước khi đóng trình duyệt.
+- **Streamlit Cloud tự cập nhật:** Mỗi khi push commit mới lên GitHub, Streamlit Cloud tự rebuild (~1–2 phút).
 - **Tên file tiếng Việt trên GitHub/Linux:** `.gitattributes` đã xử lý (LF line endings), hoạt động bình thường.
-- **Streamlit Cloud tự cập nhật:** Mỗi khi push commit mới lên GitHub, Streamlit Cloud sẽ tự rebuild và deploy.
-- **bcl_cri_demo.html:** File demo cục bộ, không ảnh hưởng đến Streamlit app, không có trong git.
+- **Windows `WinError 10054`** trong `streamlit_log.txt`: Noise bình thường khi chạy local trên Windows, không xuất hiện trên Streamlit Cloud.
+- **`bcl_cri_demo.html`:** File demo cục bộ, không track trong git, không ảnh hưởng đến app.
 
 ---
 
-*HANDOFF.md — BCL-CRI Tool v1.0*
-*Cập nhật: 2026-06-07 — Sau Sprint 5 (HTML demo) | Phiên kế tiếp: Deploy GitHub + Streamlit Cloud*
+*HANDOFF.md — BCL-CRI Tool v1.0*  
+*Cập nhật: 2026-06-07 — Phiên 5 | Trạng thái: App đã deploy, đang tinh chỉnh UI theo yêu cầu*
