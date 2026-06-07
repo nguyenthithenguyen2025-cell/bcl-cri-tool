@@ -23,10 +23,13 @@ def render_sidebar():
     with st.sidebar:
         logos = get_available_branding_logos()
         if logos:
-            logo_cols = st.columns(len(logos))
-            for col, logo in zip(logo_cols, logos):
-                with col:
-                    st.image(str(logo["path"]), use_container_width=True)
+            if len(logos) == 1:
+                st.image(str(logos[0]["path"]), use_container_width=True)
+            else:
+                logo_cols = st.columns(len(logos))
+                for col, logo in zip(logo_cols, logos):
+                    with col:
+                        st.image(str(logo["path"]), use_container_width=True)
         else:
             legacy_logo_path = os.path.join(os.path.dirname(__file__), "..", "assets", "logo.png")
             if os.path.exists(legacy_logo_path):
