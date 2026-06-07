@@ -71,10 +71,13 @@
 | `docs/CHECKLIST_KIEM_THU_TRUOC_DEMO.md` | Thêm checklist kiểm thử trước khi demo |
 | `.gitignore` | Bỏ qua thư mục `image/` sinh ra từ ảnh trong trao đổi, không thuộc mã nguồn app |
 | `README.md` | Bổ sung liên kết đến tài liệu hướng dẫn, kịch bản demo và checklist kiểm thử |
+| `pages/5_So_sánh_BCL.py` | Nâng cấp dashboard so sánh: thẻ tổng quan, mức ưu tiên xử lý, lọc theo ưu tiên, biểu đồ phân bố và Excel tổng hợp nhiều sheet |
+| `utils/charts.py` | Thêm biểu đồ phân bố theo cấp rủi ro, phân bố theo tỉnh/thành và top BCL ưu tiên theo CRI |
+| `tests/test_dashboard_charts.py` | Thêm kiểm thử hồi quy cho các biểu đồ dashboard so sánh |
 
 **Kiểm tra đã chạy:**
-- `python -m unittest discover -s tests -v`: đạt 10/10 test.
-- Biên dịch cú pháp 27 file Python: đạt.
+- `python -m unittest discover -s tests -v`: đạt 13/13 test.
+- Biên dịch cú pháp 28 file Python: đạt.
 - Dữ liệu mẫu PL2.4: CRI = 0,6647; Cấp 3; GP 2.2.
 - Xuất Excel/HTML/Word trong bộ nhớ: đạt.
 - Streamlit cục bộ `http://localhost:8501`: HTTP 200.

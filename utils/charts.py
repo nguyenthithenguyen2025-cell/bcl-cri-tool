@@ -290,3 +290,110 @@ def scatter_cri_area(summary_list: list[dict]) -> go.Figure | None:
         paper_bgcolor="white",
     )
     return fig
+
+
+def risk_distribution_chart(summary_list: list[dict]) -> go.Figure | None:
+    """
+    Biểu đồ phân bố số BCL theo cấp rủi ro.
+    """
+    if not summary_list:
+        return None
+
+    counts = {1: 0, 2: 0, 3: 0, 4: 0}
+    for item in summary_list:
+        level = item.get("risk_level")
+        if level in counts:
+            counts[level] += 1
+
+    labels = {
+        1: "Cấp 1 — Thấp",
+        2: "Cấp 2 — Trung bình",
+        3: "Cấp 3 — Cao",
+        4: "Cấp 4 — Rất cao",
+    }
+    levels = [1, 2, 3, 4]
+    values = [counts[level] for level in levels]
+
+    fig = go.Figure(go.Bar(
+        x=[labels[level] for level in levels],
+        y=values,
+        marker_color=[RISK_COLORS[level] for level in levels],
+        text=values,
+        textposition="outside",
+    ))
+    fig.update_layout(
+        yaxis=dict(title="Số lượng BCL", rangemode="tozero"),
+        xaxis=dict(title="Cấp rủi ro"),
+        height=320,
+        showlegend=False,
+        margin=dict(t=30, b=70, l=50, r=20),
+        paper_bgcolor="white",
+    )
+    return fig
+
+
+def province_distribution_chart(summary_list: list[dict]) -> go.Figure | None:
+    """
+    Biểu đồ số BCL theo tỉnh/thành phố.
+    """
+    if not summary_list:
+        return None
+
+    counts: dict[str, int] = {}
+    for item in summary_list:
+        province = item.get("tinh") or "Chưa rõ địa phương"
+        counts[province] = counts.get(province, 0) + 1
+
+    sorted_items = sorted(counts.items(), key=lambda x: x[1], reverse=True)
+    provinces = [item[0] for item in sorted_items]
+    values = [item[1] for item in sorted_items]
+
+    fig = go.Figure(go.Bar(
+        x=values,
+        y=provinces,
+        orientation="h",
+        marker_color="#1f77b4",
+        text=values,
+        textposition="outside",
+    ))
+    fig.update_layout(
+        xaxis=dict(title="Số lượng BCL", rangemode="tozero"),
+        yaxis=dict(title=""),
+        height=max(300, 60 + 32 * len(provinces)),
+        showlegend=False,
+        margin=dict(t=30, b=40, l=140, r=30),
+        paper_bgcolor="white",
+    )
+    return fig
+
+
+def priority_top_chart(summary_list: list[dict], n: int = 10) -> go.Figure | None:
+    """
+    Biểu đồ top BCL-KHVS cần ưu tiên theo CRI.
+    """
+    khvs = [item for item in summary_list if item.get("CRI") is not None]
+    if not khvs:
+        return None
+
+    top_items = sorted(khvs, key=lambda x: x["CRI"], reverse=True)[:n]
+    names = [item["ten_bcl"] for item in top_items]
+    values = [item["CRI"] for item in top_items]
+    colors = [RISK_COLORS.get(item.get("risk_level"), "#95a5a6") for item in top_items]
+
+    fig = go.Figure(go.Bar(
+        x=values,
+        y=names,
+        orientation="h",
+        marker_color=colors,
+        text=[f"{v:.4f}" for v in values],
+        textposition="outside",
+    ))
+    fig.update_layout(
+        xaxis=dict(title="CRI", range=[0.25, 1.05]),
+        yaxis=dict(title="", autorange="reversed"),
+        height=max(320, 70 + 34 * len(top_items)),
+        showlegend=False,
+        margin=dict(t=30, b=40, l=170, r=60),
+        paper_bgcolor="white",
+    )
+    return fig

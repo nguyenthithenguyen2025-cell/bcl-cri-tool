@@ -27,6 +27,17 @@
 - [ ] Thông số chi phối rủi ro hiển thị.
 - [ ] Giải pháp khuyến nghị có hạng mục bắt buộc và hạng mục bổ sung.
 
+## 3A. Kiểm thử dashboard so sánh
+
+- [ ] Nhập hoặc tải tối thiểu 3 BCL.
+- [ ] Trang “So sánh bãi chôn lấp” hiển thị thẻ tổng quan danh mục.
+- [ ] Bảng xếp hạng có cột “Ưu tiên xử lý”.
+- [ ] Bộ lọc theo tỉnh, cấp rủi ro, giải pháp và ưu tiên hoạt động.
+- [ ] Biểu đồ phân bố theo cấp rủi ro hiển thị.
+- [ ] Biểu đồ phân bố theo tỉnh/thành phố hiển thị.
+- [ ] Biểu đồ top BCL-KHVS cần ưu tiên theo CRI hiển thị.
+- [ ] Excel xuất từ Trang 5 có sheet “Tổng quan”, “Bảng ưu tiên BCL” và “Thống kê theo tỉnh”.
+
 ## 4. Kiểm thử xuất báo cáo
 
 - [ ] Nhập thông tin đơn vị thực hiện, người lập, người kiểm tra.
