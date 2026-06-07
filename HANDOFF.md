@@ -1,9 +1,10 @@
 # HANDOFF NOTE — BCL-CRI Decision Support Tool
 
-**Ngày cập nhật:** 2026-06-07 (Phiên 3)
+**Ngày cập nhật:** 2026-06-07 (Phiên 4)
 **Dự án:** Công cụ Hỗ trợ Quyết định Đóng bãi Chôn lấp CTRSH
 **Thư mục dự án:** `D:\1. AI_landfill\landfill-cri-tool\`
-**Git:** Branch `master` — Commit hiện tại: `7c08505 BCL-CRI Tool v1.0 — initial release`
+**Git:** Branch `master` — Commit hiện tại: `8e5439d`
+**GitHub:** https://github.com/nguyenthithenguyen2025-cell/bcl-cri-tool
 
 ---
 
@@ -16,11 +17,11 @@
 | Sprint 3 | Biểu đồ (6 loại) + Export Excel/Word | ✅ HOÀN THÀNH |
 | Sprint 4 | Test + Sửa lỗi + Git commit | ✅ HOÀN THÀNH |
 | Sprint 5 | HTML demo để kiểm tra trước | ✅ HOÀN THÀNH (Phiên 3) |
-| Sprint 6 | Deploy GitHub + Streamlit Cloud | ⏳ CHỜ THỰC HIỆN |
+| Sprint 6 | Deploy GitHub + Streamlit Cloud | ✅ GitHub XONG — Streamlit Cloud: CHỜ THỰC HIỆN |
 
-**Tóm tắt:** App Streamlit hoàn chỉnh (31 files), đã test tự động, git commit sạch. File HTML demo đã tạo để kiểm tra nhanh mà không cần Python. Việc còn lại duy nhất là push lên GitHub và deploy lên Streamlit Community Cloud.
+**Tóm tắt:** App Streamlit hoàn chỉnh (31 files), đã push lên GitHub public repo. Việc còn lại duy nhất là deploy lên Streamlit Community Cloud (thao tác trên web, mất ~3 phút).
 
-**Git working tree hiện tại:** Có 2 file chưa commit (`.gitignore`, `HANDOFF.md`) — cần commit trước khi push.
+**Git working tree hiện tại:** Sạch — tất cả file đã commit và push.
 
 ---
 
