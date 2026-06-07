@@ -3,6 +3,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import streamlit as st
 
 from utils.session import get_all_bcl
@@ -13,6 +15,24 @@ APP_SHORT_NAME = "BCL-CRI Tool"
 APP_VERSION = "1.1"
 PROJECT_NAME = "Đề tài TNMT.2024.05.05"
 HOST_ORG = "Trường Đại học Thủy Lợi"
+COOPERATING_ORG = "Cơ quan phối hợp"
+
+ROOT_DIR = Path(__file__).resolve().parents[1]
+BRANDING_DIR = ROOT_DIR / "assets" / "branding"
+BRANDING_LOGOS = [
+    {
+        "label": "Đơn vị chủ trì",
+        "path": BRANDING_DIR / "logo_don_vi_chu_tri.png",
+    },
+    {
+        "label": "Đề tài",
+        "path": BRANDING_DIR / "logo_de_tai.png",
+    },
+    {
+        "label": "Cơ quan phối hợp",
+        "path": BRANDING_DIR / "logo_co_quan_phoi_hop.png",
+    },
+]
 
 
 WORKFLOW_STEPS = [
@@ -110,6 +130,11 @@ def render_page_header(title: str, description: str, section: str | None = None)
         st.markdown(f"<div class='app-eyebrow'>{section}</div>", unsafe_allow_html=True)
     st.markdown(f"<h1 class='app-page-title'>{title}</h1>", unsafe_allow_html=True)
     st.markdown(f"<div class='app-page-desc'>{description}</div>", unsafe_allow_html=True)
+
+
+def get_available_branding_logos() -> list[dict]:
+    """Trả về các logo nhận diện đã có trên filesystem."""
+    return [logo for logo in BRANDING_LOGOS if logo["path"].exists()]
 
 
 def get_portfolio_status() -> dict[str, int]:

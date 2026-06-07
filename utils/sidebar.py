@@ -7,15 +7,30 @@ Gọi render_sidebar() ở đầu mỗi page file để hiển thị danh sách 
 import os
 import streamlit as st
 from utils.session import count_bcl, get_bcl_summary_list, clear_all_bcl
-from utils.ui import APP_NAME, APP_SHORT_NAME, APP_VERSION, HOST_ORG, PROJECT_NAME, get_portfolio_status
+from utils.ui import (
+    APP_NAME,
+    APP_SHORT_NAME,
+    APP_VERSION,
+    HOST_ORG,
+    PROJECT_NAME,
+    get_available_branding_logos,
+    get_portfolio_status,
+)
 
 
 def render_sidebar():
     """Hiển thị sidebar thống nhất: danh sách BCL và căn cứ pháp lý."""
     with st.sidebar:
-        logo_path = os.path.join(os.path.dirname(__file__), "..", "assets", "logo.png")
-        if os.path.exists(logo_path):
-            st.image(logo_path)
+        logos = get_available_branding_logos()
+        if logos:
+            logo_cols = st.columns(len(logos))
+            for col, logo in zip(logo_cols, logos):
+                with col:
+                    st.image(str(logo["path"]), use_container_width=True)
+        else:
+            legacy_logo_path = os.path.join(os.path.dirname(__file__), "..", "assets", "logo.png")
+            if os.path.exists(legacy_logo_path):
+                st.image(legacy_logo_path)
         st.markdown(f"### {APP_SHORT_NAME}")
         st.caption(APP_NAME)
         st.caption(f"Phiên bản {APP_VERSION} | {PROJECT_NAME}")

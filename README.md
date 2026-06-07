@@ -28,3 +28,4 @@ python -m unittest discover -s tests -v
 - [docs/HUONG_DAN_SU_DUNG_NGAN.md](docs/HUONG_DAN_SU_DUNG_NGAN.md) — Hướng dẫn sử dụng ngắn cho cán bộ địa phương
 - [docs/KICH_BAN_TRINH_DIEN_15_PHUT.md](docs/KICH_BAN_TRINH_DIEN_15_PHUT.md) — Kịch bản trình diễn 15 phút
 - [docs/CHECKLIST_KIEM_THU_TRUOC_DEMO.md](docs/CHECKLIST_KIEM_THU_TRUOC_DEMO.md) — Checklist kiểm thử trước khi demo
+- [docs/HUONG_DAN_BO_SUNG_LOGO_NHAN_DIEN.md](docs/HUONG_DAN_BO_SUNG_LOGO_NHAN_DIEN.md) — Hướng dẫn bổ sung logo nhận diện chính thức

@@ -74,6 +74,10 @@
 | `pages/5_So_sánh_BCL.py` | Nâng cấp dashboard so sánh: thẻ tổng quan, mức ưu tiên xử lý, lọc theo ưu tiên, biểu đồ phân bố và Excel tổng hợp nhiều sheet |
 | `utils/charts.py` | Thêm biểu đồ phân bố theo cấp rủi ro, phân bố theo tỉnh/thành và top BCL ưu tiên theo CRI |
 | `tests/test_dashboard_charts.py` | Thêm kiểm thử hồi quy cho các biểu đồ dashboard so sánh |
+| `utils/ui.py`, `utils/sidebar.py` | Bổ sung cơ chế nhận diện chính thức: tự hiển thị logo đơn vị chủ trì, đề tài và cơ quan phối hợp nếu có file trong `assets/branding/` |
+| `assets/branding/README.md` | Thêm hướng dẫn tên file và yêu cầu kỹ thuật cho logo |
+| `docs/HUONG_DAN_BO_SUNG_LOGO_NHAN_DIEN.md` | Thêm hướng dẫn bổ sung logo nhận diện chính thức |
+| `.gitignore` | Cho phép commit logo trong `assets/` để Streamlit Cloud hiển thị được |
 
 **Kiểm tra đã chạy:**
 - `python -m unittest discover -s tests -v`: đạt 13/13 test.
