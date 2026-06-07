@@ -1,9 +1,9 @@
 # HANDOFF NOTE — BCL-CRI Decision Support Tool
 
-**Ngày cập nhật:** 2026-06-07 (Phiên 6)
+**Ngày cập nhật:** 2026-06-07 (Phiên 6 — ĐÃ COMMIT)
 **Dự án:** Công cụ Hỗ trợ Quyết định Đóng bãi Chôn lấp CTRSH
 **Thư mục dự án:** `D:\1. AI_landfill\landfill-cri-tool\`
-**Git:** Branch `master` — Commit hiện tại: `54b7f05` *(chưa commit phiên 6)*
+**Git:** Branch `master` — Commit hiện tại: `2cf640d`
 **GitHub:** https://github.com/nguyenthithenguyen2025-cell/bcl-cri-tool
 **App URL:** https://bcl-cri-tool-f7bzdcw6lzg6yz92ouerqz.streamlit.app
 
@@ -20,9 +20,9 @@
 | Sprint 5 | HTML demo để kiểm tra trước | ✅ HOÀN THÀNH |
 | Sprint 6 | Deploy GitHub + Streamlit Cloud | ✅ HOÀN THÀNH |
 | Phiên 5 | Tinh chỉnh UI/UX theo phản hồi | ✅ HOÀN THÀNH |
-| **Phiên 6** | **Cải thiện Trang 1, thêm HTML export, sửa lỗi Word** | ⚠️ CÒN CHƯA COMMIT |
+| **Phiên 6** | **Cải thiện Trang 1, thêm HTML export, sửa lỗi Word** | ✅ HOÀN THÀNH — commit `2cf640d` |
 
-**Git working tree hiện tại:** Có 4 file chưa commit (xem mục 3).
+**Git working tree hiện tại:** Sạch — tất cả thay đổi đã được commit và push.
 
 ---
 
@@ -103,32 +103,18 @@ Cập nhật phần "Lưu ý" để mô tả cách in PDF từ HTML.
 
 ---
 
-## 3. Files thay đổi CHƯA COMMIT (Phiên 6)
+## 3. Commit Phiên 6 — ĐÃ PUSH
 
 ```
-Trạng thái git hiện tại:
-  modified:   export/word_export.py          ← xóa trường huyen
-  modified:   pages/1_Giới_thiệu.py          ← viết lại toàn bộ (~245 dòng)
-  modified:   pages/6_Xuất_báo_cáo.py        ← thêm section 5 (HTML export)
-  untracked:  export/html_export.py          ← file mới hoàn toàn
-```
+Commit: 2cf640d
+Branch: master → origin/master (đã push)
+Files: 5 files changed, 574 insertions(+), 153 deletions(-)
 
-**Lệnh commit cần chạy** (chưa push):
-
-```bash
-git add export/word_export.py export/html_export.py "pages/1_Giới_thiệu.py" "pages/6_Xuất_báo_cáo.py"
-
-git commit -m "UI/UX: cải thiện Trang 1, thêm HTML export, sửa lỗi Word export
-
-- Trang 1: styled cards quy trình 5 bước, bảng 14 thông số theo tab,
-  callout nhanh, thông tin phạm vi áp dụng
-- export/html_export.py: báo cáo HTML đầy đủ tiếng Việt, nút in PDF
-- Trang 6: thêm mục Xuất HTML → in thành PDF (section 5)
-- word_export.py: bỏ trường Huyện/Quận đã bị xóa khỏi form Trang 2
-
-Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
-
-git push origin master
+  modified:   HANDOFF.md
+  new file:   export/html_export.py
+  modified:   export/word_export.py
+  modified:   pages/1_Giới_thiệu.py
+  modified:   pages/6_Xuất_báo_cáo.py
 ```
 
 ---
@@ -190,13 +176,13 @@ landfill-cri-tool/
 
 ## 5. Việc còn lại & bước tiếp theo
 
-### 5.1 Việc CẦN làm ngay (tồn đọng từ phiên 6)
+### 5.1 Việc CẦN làm ngay
 
-| Bước | Hành động | Lệnh cụ thể |
-|------|-----------|-------------|
-| 1 | **Commit + Push** toàn bộ thay đổi Phiên 6 | Dùng lệnh ở Mục 3 bên trên |
-| 2 | **Kiểm tra app** trên Streamlit Cloud (~1-2 phút sau push) | Mở https://bcl-cri-tool-f7bzdcw6lzg6yz92ouerqz.streamlit.app |
-| 3 | **Test HTML export**: nhập 1 BCL mẫu → Trang 6 → Tạo file HTML → mở bằng Chrome → Ctrl+P → Save as PDF | Kiểm tra font tiếng Việt hiển thị đúng |
+| Bước | Hành động | Trạng thái |
+|------|-----------|------------|
+| 1 | **Commit + Push** toàn bộ thay đổi Phiên 6 | ✅ Hoàn thành — commit `2cf640d` |
+| 2 | **Kiểm tra app** trên Streamlit Cloud (~1-2 phút sau push) | ⏳ Chờ rebuild — mở https://bcl-cri-tool-f7bzdcw6lzg6yz92ouerqz.streamlit.app |
+| 3 | **Test HTML export**: nhập 1 BCL mẫu → Trang 6 → Tạo file HTML → mở bằng Chrome → Ctrl+P → Save as PDF | ⏳ Cần test thủ công |
 
 ### 5.2 Việc còn lại (ưu tiên thấp — chưa làm)
 
@@ -306,4 +292,4 @@ export_to_html(entry: dict, include_solution=True, include_legal=True) -> bytes
 ---
 
 *HANDOFF.md — BCL-CRI Tool v1.0*
-*Cập nhật: 2026-06-07 — Phiên 6 | Trạng thái: Có thay đổi chưa commit — xem Mục 3*
+*Cập nhật: 2026-06-07 — Phiên 6 | Trạng thái: Đã commit và push — `2cf640d` | Working tree: sạch*
