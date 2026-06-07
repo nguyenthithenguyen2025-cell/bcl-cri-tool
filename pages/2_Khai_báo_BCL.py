@@ -48,7 +48,7 @@ with col1:
     )
 with col2:
     xa = st.text_input(
-        "Xã / Phường / Thị trấn",
+        "Xã / Phường",
         value=draft.get("xa", ""),
     )
     col2a, col2b = st.columns(2)
