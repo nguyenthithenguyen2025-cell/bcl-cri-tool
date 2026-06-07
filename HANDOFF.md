@@ -1,9 +1,9 @@
 # HANDOFF NOTE — BCL-CRI Decision Support Tool
 
-**Ngày cập nhật:** 2026-06-07 (Phiên 6 — ĐÃ COMMIT)
+**Ngày cập nhật:** 2026-06-07 (Phiên 7 — ĐÃ COMMIT)
 **Dự án:** Công cụ Hỗ trợ Quyết định Đóng bãi Chôn lấp CTRSH
 **Thư mục dự án:** `D:\1. AI_landfill\landfill-cri-tool\`
-**Git:** Branch `master` — Commit hiện tại: `2cf640d`
+**Git:** Branch `master` — Commit hiện tại: `f606d64`
 **GitHub:** https://github.com/nguyenthithenguyen2025-cell/bcl-cri-tool
 **App URL:** https://bcl-cri-tool-f7bzdcw6lzg6yz92ouerqz.streamlit.app
 
@@ -20,15 +20,37 @@
 | Sprint 5 | HTML demo để kiểm tra trước | ✅ HOÀN THÀNH |
 | Sprint 6 | Deploy GitHub + Streamlit Cloud | ✅ HOÀN THÀNH |
 | Phiên 5 | Tinh chỉnh UI/UX theo phản hồi | ✅ HOÀN THÀNH |
-| **Phiên 6** | **Cải thiện Trang 1, thêm HTML export, sửa lỗi Word** | ✅ HOÀN THÀNH — commit `2cf640d` |
+| Phiên 6 | Cải thiện Trang 1, thêm HTML export, sửa lỗi Word | ✅ HOÀN THÀNH — commit `2cf640d` |
+| **Phiên 7** | **Lưu/tải phiên làm việc dạng JSON (persistence)** | ✅ HOÀN THÀNH — commit `f606d64` |
 
-**Git working tree hiện tại:** Sạch — tất cả thay đổi đã được commit và push.
+**Git working tree hiện tại:** Sạch — tất cả thay đổi đã được commit và push lên `origin/master`.
 
 ---
 
 ## 2. Lịch sử thay đổi theo phiên
 
-### Phiên 6 — 2026-06-07 (MỚI NHẤT — CHƯA COMMIT)
+### Phiên 7 — 2026-06-07 (MỚI NHẤT — commit `f606d64`)
+
+#### 7.1 Tính năng lưu/tải phiên làm việc (JSON persistence)
+
+**Vấn đề:** Session state mất khi refresh trình duyệt — người dùng phải nhập lại toàn bộ BCL sau mỗi lần tải lại trang.
+
+**Giải pháp:** Thêm export/import JSON cho toàn bộ phiên làm việc.
+
+| File | Thay đổi |
+|------|---------|
+| `utils/session.py` | Thêm `export_session_json() -> bytes` và `import_session_json(raw) -> (int, str)` |
+| `pages/6_Xuất_báo_cáo.py` | Thêm ô tải file JSON khi `count_bcl() == 0`; thêm Section 6 xuất/nhập JSON khi đã có dữ liệu |
+
+**Cách dùng:**
+1. Sau khi nhập BCL → Trang 6 → Section 6 → "💾 Tải xuống JSON" → lưu file vào máy.
+2. Lần sau mở app → Trang 6 → tải file JSON lên → dữ liệu được phục hồi, tiếp tục làm việc.
+
+**Lưu ý:** Import gộp (merge) với dữ liệu hiện có — bỏ qua BCL trùng ID, thêm BCL mới.
+
+---
+
+### Phiên 6 — 2026-06-07
 
 #### 2.1 Sửa lỗi — `export/word_export.py`
 
@@ -103,11 +125,21 @@ Cập nhật phần "Lưu ý" để mô tả cách in PDF từ HTML.
 
 ---
 
-## 3. Commit Phiên 6 — ĐÃ PUSH
+## 3. Commit gần nhất — ĐÃ PUSH
 
+### Phiên 7 (mới nhất)
+```
+Commit: f606d64
+Branch: master → origin/master (đã push)
+Files: 2 files changed, 121 insertions(+), 3 deletions(-)
+
+  modified:   utils/session.py
+  modified:   pages/6_Xuất_báo_cáo.py
+```
+
+### Phiên 6
 ```
 Commit: 2cf640d
-Branch: master → origin/master (đã push)
 Files: 5 files changed, 574 insertions(+), 153 deletions(-)
 
   modified:   HANDOFF.md
@@ -180,9 +212,10 @@ landfill-cri-tool/
 
 | Bước | Hành động | Trạng thái |
 |------|-----------|------------|
-| 1 | **Commit + Push** toàn bộ thay đổi Phiên 6 | ✅ Hoàn thành — commit `2cf640d` |
-| 2 | **Kiểm tra app** trên Streamlit Cloud (~1-2 phút sau push) | ⏳ Chờ rebuild — mở https://bcl-cri-tool-f7bzdcw6lzg6yz92ouerqz.streamlit.app |
+| 1 | Commit + Push Phiên 6 | ✅ Hoàn thành — commit `2cf640d` |
+| 2 | **Kiểm tra app** trên Streamlit Cloud (~1-2 phút sau push) | ⏳ Cần test thủ công |
 | 3 | **Test HTML export**: nhập 1 BCL mẫu → Trang 6 → Tạo file HTML → mở bằng Chrome → Ctrl+P → Save as PDF | ⏳ Cần test thủ công |
+| 4 | **Test JSON persistence**: nhập BCL → xuất JSON → refresh → tải JSON → xác nhận dữ liệu phục hồi | ⏳ Cần test thủ công |
 
 ### 5.2 Việc còn lại (ưu tiên thấp — chưa làm)
 
@@ -191,7 +224,7 @@ landfill-cri-tool/
 | 1 | **Logo ứng dụng** | Thấp | Đặt file tại `assets/logo.png` (~200×200px) → `utils/sidebar.py` tự nhận |
 | 2 | **Điểm mẫu PL2.4 chênh lệch nhỏ** | Thấp | CRI = 0,6647 vs 0,662 gốc — đúng cấp, đúng giải pháp. Cập nhật `data/sample_data.json` khi có bảng điểm gốc chính xác |
 | 3 | **Bản đồ phân bố BCL (Trang 5)** | Thấp — v1.1 | Cần Mapbox token hoặc OpenStreetMap; tọa độ GPS tùy chọn |
-| 4 | **Lưu dữ liệu SQLite** | Thấp — v1.2 | Session state mất khi đóng tab; giải pháp tạm: xuất Excel/HTML ngay sau nhập |
+| 4 | ~~Lưu dữ liệu SQLite~~ | ✅ Thay thế bằng JSON export/import (Phiên 7) | |
 | 5 | **Phân quyền người dùng** | Thấp — v2.0 | Dùng `st-authenticator` nếu cần |
 
 ---
@@ -292,4 +325,4 @@ export_to_html(entry: dict, include_solution=True, include_legal=True) -> bytes
 ---
 
 *HANDOFF.md — BCL-CRI Tool v1.0*
-*Cập nhật: 2026-06-07 — Phiên 6 | Trạng thái: Đã commit và push — `2cf640d` | Working tree: sạch*
+*Cập nhật: 2026-06-07 — Phiên 7 | Trạng thái: Đã commit và push — `f606d64` | Working tree: sạch*
