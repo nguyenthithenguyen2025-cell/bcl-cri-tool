@@ -6,6 +6,7 @@ Không cần thư viện bên ngoài ngoài thư viện chuẩn.
 
 from datetime import date
 from config.parameters import PARAMETERS
+from core.classifier import generate_technical_analysis
 
 RISK_COLORS_HEX = {
     1: "#2ecc71",
@@ -49,6 +50,7 @@ def export_to_html(
     risk = result.get("risk", {})
     solution = result.get("solution", {})
     assumed_max = result.get("assumed_max", [])
+    analysis = generate_technical_analysis(entry)
 
     ten_bcl = info.get("ten_bcl", "Bãi chôn lấp")
     tinh = info.get("tinh", "")
@@ -194,23 +196,56 @@ ul li { margin: 3px 0; }
 """
 
     # ── Phần giải pháp
+    analysis_section = ""
+    if info.get("loai_bcl") == "KHVS" and result.get("CRI") is not None:
+        group_items = "".join(
+            f"<li><strong>{item['group']} — {item['name']}:</strong> {item['comment']}</li>"
+            for item in analysis.get("group_comments", [])
+        )
+        top_items = "".join(
+            f"<li><strong>{item['id']} — {item['name']}:</strong> điểm {item['score']}, "
+            f"đóng góp {item['contribution']:.4f}</li>"
+            for item in analysis.get("top_risks", [])[:5]
+        )
+        action_items = "".join(
+            f"<li>{item}</li>"
+            for item in analysis.get("recommended_actions", [])
+        )
+        data_items = "".join(
+            f"<li>{item}</li>"
+            for item in analysis.get("data_quality_notes", [])
+        )
+        analysis_section = f"""
+<h1>3. Phân tích chuyên môn</h1>
+<p>{analysis.get("summary", "")}</p>
+<h2>3.1. Nhận xét theo nhóm H/P/R</h2>
+<ul>{group_items}</ul>
+{f'<p><strong>{analysis.get("dominant_group")}</strong></p>' if analysis.get("dominant_group") else ''}
+<h2>3.2. Thông số chi phối rủi ro</h2>
+<ul>{top_items}</ul>
+{f'<h2>3.3. Chất lượng dữ liệu</h2><ul>{data_items}</ul>' if data_items else ''}
+<h2>3.4. Khuyến nghị kỹ thuật tiếp theo</h2>
+<ul>{action_items}</ul>
+"""
+
+    # ── Phần giải pháp
     solution_section = ""
     if include_solution and solution:
         mandatory = "".join(f"<li>{item}</li>" for item in solution.get("mandatory_items", []))
         optional = "".join(f"<li>{item}</li>" for item in solution.get("optional_items", []))
         monitoring = solution.get("monitoring_period", "—")
         solution_section = f"""
-<h1>3. Giải pháp đóng bãi khuyến nghị</h1>
+<h1>4. Giải pháp đóng bãi khuyến nghị</h1>
 <p><strong>{solution.get("name", "")}</strong></p>
 <p>{solution.get("description", "")}</p>
 
-<h2>3.1. Hạng mục bắt buộc</h2>
+<h2>4.1. Hạng mục bắt buộc</h2>
 <ul>{mandatory}</ul>
 
-<h2>3.2. Hạng mục khuyến nghị thêm</h2>
+<h2>4.2. Hạng mục khuyến nghị thêm</h2>
 <ul>{optional}</ul>
 
-<h2>3.3. Thời gian quản lý sau đóng bãi</h2>
+<h2>4.3. Thời gian quản lý sau đóng bãi</h2>
 <p>{monitoring}</p>
 """
 
@@ -219,7 +254,7 @@ ul li { margin: 3px 0; }
     if include_legal:
         legal_basis = solution.get("legal_basis", "") if solution else ""
         legal_section = f"""
-<h1>4. Căn cứ pháp lý</h1>
+<h1>5. Căn cứ pháp lý</h1>
 <ul>
   <li>Điều 32, Thông tư 02/2022/TT-BTNMT ngày 10/01/2022 của Bộ Tài nguyên và Môi trường</li>
   <li>QCVN 96:2025/BNNMT — Quy chuẩn kỹ thuật quốc gia về bãi chôn lấp chất thải rắn</li>
@@ -256,6 +291,7 @@ ul li { margin: 3px 0; }
   </table>
 
   {cri_section}
+  {analysis_section}
   {solution_section}
   {legal_section}
 

@@ -6,7 +6,7 @@ import unittest
 from pathlib import Path
 
 from core.calculator import calculate_cri
-from core.classifier import classify_and_recommend
+from core.classifier import classify_and_recommend, generate_technical_analysis
 from export.excel_export import export_to_excel
 from export.html_export import export_to_html
 from export.word_export import export_to_word
@@ -53,6 +53,17 @@ class CoreCriTest(unittest.TestCase):
         self.assertIsNone(result["risk"]["cri"])
         self.assertEqual(result["classification_key"], "HVS_DAT_CHUAN")
         self.assertEqual(result["solution"]["short_name"], "GP 2.1")
+
+    def test_technical_analysis_for_sample(self):
+        entry = _sample_entry()
+
+        analysis = generate_technical_analysis(entry)
+
+        self.assertIn("CRI = 0.6647", analysis["summary"])
+        self.assertEqual(len(analysis["group_comments"]), 3)
+        self.assertGreaterEqual(len(analysis["top_risks"]), 3)
+        self.assertTrue(analysis["dominant_group"])
+        self.assertTrue(analysis["recommended_actions"])
 
 
 class ExportTest(unittest.TestCase):

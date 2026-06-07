@@ -9,6 +9,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.table import WD_TABLE_ALIGNMENT
 from config.parameters import PARAMETERS, PARAM_BY_ID
 from config.parameters import RISK_COLORS
+from core.classifier import generate_technical_analysis
 
 RISK_LEVEL_LABELS = {
     1: "Cấp 1 — Rủi ro thấp",
@@ -70,6 +71,7 @@ def export_to_word(
     missing_notes = entry.get("missing_notes", {})
     risk = result.get("risk", {})
     solution = result.get("solution", {})
+    analysis = generate_technical_analysis(entry)
 
     # ══════════════════════════════════════════
     # TIÊU ĐỀ
@@ -200,23 +202,54 @@ def export_to_word(
         doc.add_paragraph("(*) Thông số được gán điểm 1,00 do thiếu dữ liệu (nguyên tắc thận trọng).").runs[0].font.italic = True
         doc.add_paragraph()
 
+        _heading(doc, "3. Phân tích chuyên môn", level=1)
+        doc.add_paragraph(analysis.get("summary", ""))
+
+        _heading(doc, "3.1. Nhận xét theo nhóm H/P/R", level=2)
+        for item in analysis.get("group_comments", []):
+            doc.add_paragraph(
+                f"{item['group']} — {item['name']}: {item['comment']}",
+                style="List Bullet",
+            )
+        if analysis.get("dominant_group"):
+            doc.add_paragraph(analysis["dominant_group"]).runs[0].font.bold = True
+
+        _heading(doc, "3.2. Thông số chi phối rủi ro", level=2)
+        for item in analysis.get("top_risks", [])[:5]:
+            doc.add_paragraph(
+                f"{item['id']} — {item['name']}: điểm {item['score']}, "
+                f"đóng góp {item['contribution']:.4f}",
+                style="List Bullet",
+            )
+
+        if analysis.get("data_quality_notes"):
+            _heading(doc, "3.3. Chất lượng dữ liệu", level=2)
+            for note in analysis["data_quality_notes"]:
+                doc.add_paragraph(note, style="List Bullet")
+
+        _heading(doc, "3.4. Khuyến nghị kỹ thuật tiếp theo", level=2)
+        for action in analysis.get("recommended_actions", []):
+            doc.add_paragraph(action, style="List Bullet")
+
+        doc.add_paragraph()
+
     # ══════════════════════════════════════════
     # PHẦN 3 — GIẢI PHÁP KHUYẾN NGHỊ
     # ══════════════════════════════════════════
     if include_solution and solution:
-        _heading(doc, "3. Giải pháp đóng bãi khuyến nghị", level=1)
+        _heading(doc, "4. Giải pháp đóng bãi khuyến nghị", level=1)
         doc.add_paragraph(solution.get("name", "")).runs[0].font.bold = True
         doc.add_paragraph(solution.get("description", ""))
 
-        _heading(doc, "3.1. Hạng mục bắt buộc", level=2)
+        _heading(doc, "4.1. Hạng mục bắt buộc", level=2)
         for item in solution.get("mandatory_items", []):
             p = doc.add_paragraph(item, style="List Bullet")
 
-        _heading(doc, "3.2. Hạng mục khuyến nghị thêm", level=2)
+        _heading(doc, "4.2. Hạng mục khuyến nghị thêm", level=2)
         for item in solution.get("optional_items", []):
             doc.add_paragraph(item, style="List Bullet")
 
-        _heading(doc, "3.3. Thời gian quản lý sau đóng bãi", level=2)
+        _heading(doc, "4.3. Thời gian quản lý sau đóng bãi", level=2)
         doc.add_paragraph(solution.get("monitoring_period", "—"))
 
         doc.add_paragraph()
@@ -225,7 +258,7 @@ def export_to_word(
     # PHẦN 4 — CĂN CỨ PHÁP LÝ
     # ══════════════════════════════════════════
     if include_legal:
-        _heading(doc, "4. Căn cứ pháp lý", level=1)
+        _heading(doc, "5. Căn cứ pháp lý", level=1)
         legal_items = [
             "Điều 32, Thông tư 02/2022/TT-BTNMT ngày 10/01/2022 của Bộ Tài nguyên và Môi trường",
             "QCVN 96:2025/BNNMT — Quy chuẩn kỹ thuật quốc gia về bãi chôn lấp chất thải rắn",

@@ -57,9 +57,13 @@
 | `pages/3_Nhập_CRI.py` | Yêu cầu nhập lý do cho từng thông số CRI thiếu trước khi lưu kết quả vào danh sách BCL |
 | `export/html_export.py`, `export/word_export.py`, `export/excel_export.py` | Bổ sung lý do thiếu dữ liệu vào báo cáo đầu ra |
 | `tests/test_validators.py` | Thêm kiểm thử validator dữ liệu đầu vào và lý do thiếu dữ liệu |
+| `core/classifier.py` | Thêm `generate_technical_analysis()` để sinh diễn giải chuyên môn cho H/P/R/CRI, thông số chi phối, chất lượng dữ liệu và khuyến nghị kỹ thuật |
+| `pages/4_Kết_quả.py` | Nâng cấp phần phân tích tự động thành phân tích chuyên môn theo nhóm H/P/R và khuyến nghị kỹ thuật tiếp theo |
+| `export/html_export.py`, `export/word_export.py` | Bổ sung mục "Phân tích chuyên môn" vào báo cáo HTML và Word |
+| `tests/test_core_exports.py` | Thêm kiểm thử hồi quy cho hàm phân tích chuyên môn |
 
 **Kiểm tra đã chạy:**
-- `python -m unittest discover -s tests -v`: đạt 9/9 test.
+- `python -m unittest discover -s tests -v`: đạt 10/10 test.
 - Biên dịch cú pháp 27 file Python: đạt.
 - Dữ liệu mẫu PL2.4: CRI = 0,6647; Cấp 3; GP 2.2.
 - Xuất Excel/HTML/Word trong bộ nhớ: đạt.

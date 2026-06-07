@@ -139,42 +139,35 @@ if loai_bcl == "KHVS" and scores:
 # PHẦN 3 — PHÂN TÍCH TỰ ĐỘNG
 # ════════════════════════════════════════════════════════
 if loai_bcl == "KHVS" and scores:
-    from core.classifier import get_top_risk_params
-    filled_scores = {k: v if v is not None else 1.00 for k, v in scores.items()}
-    top3 = get_top_risk_params(filled_scores, n=3)
+    from core.classifier import generate_technical_analysis
+    analysis = generate_technical_analysis(entry)
 
-    st.subheader("Phân tích tự động")
-    if top3:
-        st.markdown("**Top 3 thông số có mức rủi ro cao nhất:**")
-        for i, t in enumerate(top3, 1):
-            color_p = {0.25: "🟢", 0.50: "🟡", 0.75: "🟠", 1.00: "🔴"}.get(t["score"], "⚪")
+    st.subheader("Phân tích chuyên môn")
+    st.markdown(analysis["summary"])
+
+    for item in analysis["group_comments"]:
+        st.markdown(f"- **{item['group']} — {item['name']}:** {item['comment']}")
+
+    if analysis["dominant_group"]:
+        st.info(analysis["dominant_group"])
+
+    if analysis["top_risks"]:
+        st.markdown("**Thông số chi phối rủi ro cần ưu tiên kiểm tra:**")
+        for i, t in enumerate(analysis["top_risks"][:5], 1):
             st.markdown(
-                f"{i}. {color_p} **{t['id']} — {t['name']}**: "
-                f"điểm = {t['score']} | đóng góp vào nhóm {t['group']} = {t['contribution']:.4f}"
+                f"{i}. **{t['id']} — {t['name']}**: điểm = {t['score']}, "
+                f"đóng góp trong nhóm {t['group']} = {t['contribution']:.4f}."
             )
 
-    if cri_val:
-        if cri_val < 0.36:
-            st.success(
-                "CRI thấp cho thấy bãi có mức độ ô nhiễm và rủi ro tiềm năng thấp. "
-                "Giải pháp đóng bãi đơn giản (phủ xanh) có thể đủ điều kiện áp dụng."
-            )
-        elif cri_val < 0.53:
-            st.info(
-                "CRI ở mức trung bình. Bãi cần được đóng theo yêu cầu kỹ thuật cơ bản "
-                "(lớp phủ kỹ thuật + thoát khí thụ động) và theo dõi dài hạn."
-            )
-        elif cri_val < 0.69:
-            st.warning(
-                "CRI cao — bãi có nguy cơ ô nhiễm đáng kể. Cần đóng bãi tăng cường với "
-                "hệ thống thu gom và xử lý nước rỉ rác, thu khí chủ động."
-            )
-        else:
-            st.error(
-                "CRI rất cao — bãi có nguy cơ ô nhiễm nghiêm trọng. "
-                "Cần can thiệp nâng cao hoặc đào chuyển chất thải. "
-                "Khuyến nghị khảo sát chi tiết và lập đề án can thiệp ngay."
-            )
+    if analysis["data_quality_notes"]:
+        with st.expander("Chất lượng dữ liệu và thông số thiếu", expanded=True):
+            for note in analysis["data_quality_notes"]:
+                st.warning(note)
+
+    if analysis["recommended_actions"]:
+        st.markdown("**Khuyến nghị kỹ thuật tiếp theo:**")
+        for action in analysis["recommended_actions"]:
+            st.markdown(f"- {action}")
 
     st.divider()
 
