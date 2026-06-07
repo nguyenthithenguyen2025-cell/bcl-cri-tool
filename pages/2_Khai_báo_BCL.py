@@ -168,75 +168,83 @@ ghi_chu = st.text_area(
 st.divider()
 
 # ═══════════════════════════════════════════════════════
-# NÚT LƯU
+# AUTO-SAVE (thay thế nút Lưu)
 # ═══════════════════════════════════════════════════════
-col_btn1, col_btn2, _ = st.columns([2, 2, 4])
+info = {
+    "ten_bcl": ten_bcl.strip(),
+    "tinh": tinh.strip(),
+    "xa": xa.strip(),
+    "toa_do_lat": toa_do_lat if toa_do_lat else None,
+    "toa_do_lon": toa_do_lon if toa_do_lon else None,
+    "loai_bcl": loai_bcl,
+    "hvs_status": hvs_status,
+    "dien_tich_ha": dien_tich_ha,
+    "the_tich_m3": the_tich_m3 if the_tich_m3 > 0 else None,
+    "chieu_cao_m": chieu_cao_m if chieu_cao_m > 0 else None,
+    "nam_bat_dau": int(nam_bat_dau),
+    "nam_ngung": int(nam_ngung),
+    "ghi_chu": ghi_chu.strip(),
+}
 
-with col_btn1:
-    btn_save = st.button("💾 Lưu thông tin BCL", type="primary", use_container_width=True)
+errors = validate_bcl_info(info)
 
-with col_btn2:
-    btn_clear = st.button("🔄 Nhập lại", use_container_width=True)
+if ten_bcl.strip():
+    st.session_state["_bcl_saved_info"] = info
+    editing_id = st.session_state.get("_bcl_active_editing_id")
 
-if btn_clear:
-    st.session_state.pop("_bcl_form_draft", None)
-    st.session_state.pop("_bcl_saved_info", None)
-    st.rerun()
+    if loai_bcl == "HVS":
+        from core.classifier import classify_and_recommend
+        from utils.session import add_bcl, update_bcl, get_bcl as _get_bcl
 
-if btn_save:
-    info = {
-        "ten_bcl": ten_bcl.strip(),
-        "tinh": tinh.strip(),
-        "xa": xa.strip(),
-        "toa_do_lat": toa_do_lat if toa_do_lat else None,
-        "toa_do_lon": toa_do_lon if toa_do_lon else None,
-        "loai_bcl": loai_bcl,
-        "hvs_status": hvs_status,
-        "dien_tich_ha": dien_tich_ha,
-        "the_tich_m3": the_tich_m3 if the_tich_m3 > 0 else None,
-        "chieu_cao_m": chieu_cao_m if chieu_cao_m > 0 else None,
-        "nam_bat_dau": int(nam_bat_dau),
-        "nam_ngung": int(nam_ngung),
-        "ghi_chu": ghi_chu.strip(),
-    }
+        hvs_data = classify_and_recommend(cri=None, bcl_type="HVS", hvs_status=hvs_status)
+        hvs_result = {
+            "H": None, "P": None, "R": None, "CRI": None,
+            "risk": hvs_data["risk"],
+            "solution": hvs_data["solution"],
+            "missing_params": [],
+            "assumed_max": [],
+        }
+        if editing_id and _get_bcl(editing_id):
+            update_bcl(editing_id, info=info, scores={}, missing_notes={}, result=hvs_result)
+        else:
+            new_id = add_bcl(info=info, scores={}, missing_notes={}, result=hvs_result)
+            st.session_state["_bcl_active_editing_id"] = new_id
+            st.session_state.pop("_cri_scores_draft", None)
+            st.session_state.pop("_cri_notes_draft", None)
 
-    errors = validate_bcl_info(info)
-    if errors:
-        for err in errors:
-            st.error(err)
-    else:
-        # Lưu vào session draft (sẽ kết hợp với scores ở Trang 3)
-        st.session_state["_bcl_saved_info"] = info
-        st.session_state.pop("_bcl_form_draft", None)
-        # Xóa context chỉnh sửa cũ — BCL mới sẽ được tạo từ đầu
-        st.session_state.pop("_bcl_active_editing_id", None)
-        st.session_state.pop("_cri_scores_draft", None)
-        st.session_state.pop("_cri_notes_draft", None)
-
-        st.success(f"✅ Đã lưu thông tin: **{ten_bcl}** ({tinh})")
-
-        if loai_bcl == "HVS":
-            # BCL-HVS — tính ngay giải pháp, lưu vào session BCL list
-            from core.classifier import classify_and_recommend
-            from utils.session import add_bcl
-
-            result = classify_and_recommend(cri=None, bcl_type="HVS", hvs_status=hvs_status)
-            bcl_id = add_bcl(
-                info=info,
-                scores={},
-                missing_notes={},
-                result={
-                    "H": None, "P": None, "R": None, "CRI": None,
-                    "risk": result["risk"],
-                    "solution": result["solution"],
-                    "missing_params": [],
-                    "assumed_max": [],
-                },
-            )
-            st.info(
-                f"BCL-HVS không cần tính CRI. "
-                f"Giải pháp khuyến nghị: **{result['solution']['short_name']}**. "
+        if not errors:
+            sol_name = hvs_data["solution"]["short_name"]
+            st.success(
+                f"✅ Lưu tự động — **{ten_bcl}** ({tinh}) — BCL-HVS. "
+                f"Giải pháp: **{sol_name}**. "
                 "Chuyển sang trang **Kết quả** để xem chi tiết."
             )
-        else:
-            st.info("Chuyển sang trang **Nhập thông số CRI** để tiếp tục đánh giá.")
+    else:
+        # BCL-KHVS: cập nhật info của BCL hiện tại nếu đã có trong danh sách
+        if editing_id:
+            from utils.session import update_bcl, get_bcl as _get_bcl
+            if _get_bcl(editing_id):
+                update_bcl(editing_id, info=info)
+
+        if not errors:
+            st.success(
+                f"✅ Lưu tự động — **{ten_bcl}** ({tinh}) — BCL-KHVS. "
+                "Chuyển sang trang **Nhập thông số CRI** để đánh giá."
+            )
+
+    if errors:
+        for err in errors:
+            st.warning(err)
+else:
+    st.info("Nhập tên bãi chôn lấp để bắt đầu lưu tự động.")
+
+# ── Nút hành động
+st.divider()
+col_btn, _ = st.columns([3, 5])
+with col_btn:
+    if st.button("➕ Thêm BCL mới", use_container_width=True,
+                 help="Xóa form hiện tại và bắt đầu khai báo một bãi chôn lấp mới"):
+        for key in ["_bcl_active_editing_id", "_bcl_saved_info", "_bcl_form_draft",
+                    "_cri_scores_draft", "_cri_notes_draft"]:
+            st.session_state.pop(key, None)
+        st.rerun()

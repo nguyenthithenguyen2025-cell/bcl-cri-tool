@@ -5,8 +5,7 @@ import streamlit as st
 from config.parameters import PARAMETERS, PARAMS_BY_GROUP, PARAM_BY_ID
 from core.calculator import calculate_cri
 from core.classifier import classify_and_recommend, get_top_risk_params
-from utils.validators import validate_scores, validate_missing_notes
-from utils.session import add_bcl, update_bcl, get_active_bcl
+from utils.session import add_bcl, update_bcl
 from utils.sidebar import render_sidebar
 
 st.set_page_config(page_title="Nhập thông số CRI — BCL-CRI Tool", layout="wide")
@@ -200,53 +199,27 @@ for i, param in enumerate(r_params):
 st.divider()
 
 # ─────────────────────────────────────────────────────────────────────────────
-# NÚT TÍNH CRI
+# AUTO-TÍNH CRI VÀ AUTO-LƯU (thay thế nút "Tính CRI")
 # ─────────────────────────────────────────────────────────────────────────────
 all_scores = {**h_scores, **p_scores, **r_scores}
 all_notes = {**h_notes, **p_notes, **r_notes}
 
-# Lưu draft khi người dùng thay đổi
+# Luôn lưu draft
 st.session_state["_cri_scores_draft"] = all_scores
 st.session_state["_cri_notes_draft"] = all_notes
 
-col_b1, col_b2, _ = st.columns([2, 2, 4])
-with col_b1:
-    btn_calc = st.button("🔢 Tính CRI", type="primary", use_container_width=True)
-with col_b2:
-    btn_reset = st.button("🔄 Nhập lại", use_container_width=True)
+# Tính CRI
+result = calculate_cri(all_scores)
+classify = classify_and_recommend(result["CRI"], bcl_type="KHVS")
+result["risk"] = classify["risk"]
+result["solution"] = classify["solution"]
 
-if btn_reset:
-    st.session_state.pop("_cri_scores_draft", None)
-    st.session_state.pop("_cri_notes_draft", None)
-    st.rerun()
+# Auto-lưu vào bcl_list khi ít nhất 1 điểm đã được chọn
+n_selected = sum(1 for s in all_scores.values() if s is not None)
+n_missing = 14 - n_selected
 
-if btn_calc:
-    # Kiểm tra đầu vào
-    validation = validate_scores(all_scores)
-    if validation["errors"]:
-        for err in validation["errors"]:
-            st.error(err)
-        st.stop()
-
-    # Cảnh báo thiếu dữ liệu
-    if validation["warnings"]:
-        with st.expander("⚠️ Cảnh báo thiếu dữ liệu (đã gán điểm 1,00)", expanded=True):
-            for w in validation["warnings"]:
-                st.warning(w)
-        note_warnings = validate_missing_notes(validation["missing_ids"], all_notes)
-        for nw in note_warnings:
-            st.info(nw)
-
-    # Tính CRI
-    result = calculate_cri(all_scores)
-    classify = classify_and_recommend(result["CRI"], bcl_type="KHVS")
-
-    result["risk"] = classify["risk"]
-    result["solution"] = classify["solution"]
-
-    # Lưu vào session
+if n_selected > 0:
     if st.session_state.get("_bcl_active_editing_id"):
-        # Đã tính lần trước — cập nhật thay vì thêm mới (tránh trùng lặp)
         update_bcl(
             st.session_state["_bcl_active_editing_id"],
             scores=all_scores,
@@ -255,58 +228,70 @@ if btn_calc:
         )
         bcl_id = st.session_state["_bcl_active_editing_id"]
     else:
-        # Lần tính đầu tiên — thêm BCL mới vào session
         bcl_id = add_bcl(
             info=saved_info,
             scores=all_scores,
             missing_notes=all_notes,
             result=result,
         )
-        # Lưu id để các lần tính lại sau dùng update_bcl thay vì add_bcl
         st.session_state["_bcl_active_editing_id"] = bcl_id
-        # Giữ lại _bcl_saved_info để người dùng có thể điều chỉnh và tính lại
 
-    # Hiển thị kết quả tóm tắt
-    st.divider()
-    level = classify["risk"]["level"]
-    color = classify["risk"]["color"]
-    cri_val = result["CRI"]
+# ── Hiển thị kết quả live
+st.divider()
+cri_val = result["CRI"]
+color = classify["risk"]["color"]
 
-    st.markdown(
-        f"## Kết quả tính CRI — {saved_info.get('ten_bcl', '')}"
-    )
-    col_r1, col_r2, col_r3, col_r4 = st.columns(4)
-    with col_r1:
-        st.metric("Chỉ số H (Nguồn)", f"{result['H']:.4f}")
-    with col_r2:
-        st.metric("Chỉ số P (Đường)", f"{result['P']:.4f}")
-    with col_r3:
-        st.metric("Chỉ số R (Đối tượng)", f"{result['R']:.4f}")
-    with col_r4:
-        st.metric("CRI tổng hợp", f"{cri_val:.4f}")
+st.markdown(f"### Kết quả CRI — {saved_info.get('ten_bcl', '(chưa đặt tên)')}")
 
-    st.markdown(
-        f'<div style="background:{color};color:white;padding:12px 20px;border-radius:8px;'
-        f'font-size:1.2rem;font-weight:bold;">'
-        f"🎯 {classify['risk']['label']} — Giải pháp khuyến nghị: "
-        f"{classify['solution']['short_name']}"
-        f"</div>",
-        unsafe_allow_html=True,
+if n_missing > 0:
+    st.caption(
+        f"⚠️ {n_missing}/14 thông số chưa chọn — đang gán điểm 1,00 (nguyên tắc thận trọng). "
+        "CRI hiển thị có thể cao hơn thực tế."
     )
 
-    # Top thông số rủi ro cao nhất
-    filled = {k: v if v is not None else 1.00 for k, v in all_scores.items()}
-    top3 = get_top_risk_params(filled, n=3)
-    if top3:
-        st.markdown("**Top 3 thông số có mức rủi ro cao nhất:**")
-        for t in top3:
-            st.markdown(
-                f"- **{t['id']}** ({t['name']}): điểm = {t['score']}, "
-                f"trọng số = {t['weight_normalized']:.4f}, "
-                f"đóng góp = {t['contribution']:.4f}"
-            )
+col_r1, col_r2, col_r3, col_r4 = st.columns(4)
+with col_r1:
+    st.metric("Chỉ số H (Nguồn)", f"{result['H']:.4f}")
+with col_r2:
+    st.metric("Chỉ số P (Đường)", f"{result['P']:.4f}")
+with col_r3:
+    st.metric("Chỉ số R (Đối tượng)", f"{result['R']:.4f}")
+with col_r4:
+    st.metric("CRI tổng hợp", f"{cri_val:.4f}")
 
-    st.success(
-        f"✅ Đã lưu kết quả BCL **{saved_info.get('ten_bcl', '')}** (ID: {bcl_id}). "
+st.markdown(
+    f'<div style="background:{color};color:white;padding:12px 20px;border-radius:8px;'
+    f'font-size:1.1rem;font-weight:bold;">'
+    f"🎯 {classify['risk']['label']} — Giải pháp: {classify['solution']['short_name']}"
+    f"</div>",
+    unsafe_allow_html=True,
+)
+
+# Top thông số rủi ro
+filled = {k: v if v is not None else 1.00 for k, v in all_scores.items()}
+top3 = get_top_risk_params(filled, n=3)
+if top3 and n_selected > 0:
+    st.markdown("**Top 3 thông số rủi ro cao nhất:**")
+    for t in top3:
+        st.markdown(
+            f"- **{t['id']}** ({t['name']}): điểm = {t['score']}, "
+            f"đóng góp = {t['contribution']:.4f}"
+        )
+
+if n_selected > 0:
+    st.info(
+        f"✅ Dữ liệu lưu tự động. "
         "Chuyển sang trang **Kết quả & Phân tích** để xem biểu đồ chi tiết."
     )
+else:
+    st.info("Chọn ít nhất một thông số để lưu kết quả vào danh sách BCL.")
+
+# ── Nút Nhập lại
+st.divider()
+col_b, _ = st.columns([3, 5])
+with col_b:
+    if st.button("🔄 Nhập lại thông số CRI", use_container_width=True,
+                 help="Xóa tất cả điểm đã chọn, giữ lại BCL trong danh sách"):
+        st.session_state.pop("_cri_scores_draft", None)
+        st.session_state.pop("_cri_notes_draft", None)
+        st.rerun()
