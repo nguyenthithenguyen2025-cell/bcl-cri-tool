@@ -7,7 +7,6 @@ from utils.session import get_bcl_summary_list, count_bcl
 from utils.sidebar import render_sidebar
 from utils.ui import apply_global_styles, render_page_header
 
-st.set_page_config(page_title="So sánh BCL — BCL-CRI Tool", layout="wide")
 apply_global_styles()
 render_sidebar()
 render_page_header(

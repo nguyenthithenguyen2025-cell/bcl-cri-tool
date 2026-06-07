@@ -9,7 +9,6 @@ from utils.session import add_bcl, update_bcl, get_all_bcl, get_bcl, set_active_
 from utils.sidebar import render_sidebar
 from utils.ui import apply_global_styles, render_page_header
 
-st.set_page_config(page_title="Nhập thông số CRI — BCL-CRI Tool", layout="wide")
 apply_global_styles()
 render_sidebar()
 

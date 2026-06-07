@@ -7,7 +7,6 @@ from utils.sidebar import render_sidebar
 from utils.session import get_all_bcl, get_bcl, set_active_bcl
 from utils.ui import apply_global_styles, render_page_header
 
-st.set_page_config(page_title="Khai báo BCL — BCL-CRI Tool", layout="wide")
 apply_global_styles()
 render_sidebar()
 render_page_header(

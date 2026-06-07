@@ -50,6 +50,8 @@
 | `utils/ui.py` | Thêm module giao diện dùng chung: tên app chính thức, CSS, tiêu đề trang, trạng thái hồ sơ và quy trình 5 bước |
 | `app.py`, `pages/*.py`, `utils/sidebar.py` | Chuẩn hóa tiêu đề, mô tả trang, sidebar, trạng thái hồ sơ và quy trình nghiệp vụ theo phong cách trang trọng hơn |
 | `.streamlit/config.toml`, `README.md` | Cập nhật theme nhẹ và tên app chính thức: "Công cụ hỗ trợ lựa chọn giải pháp đóng bãi chôn lấp CTRSH" |
+| `app.py`, `pages/0_Tổng_quan_công_cụ.py` | Chuyển sang `st.navigation()` để đổi mục đầu tiên từ `app` thành "Tổng quan công cụ" |
+| `app.py`, `pages/4_Kết_quả.py` | Đổi nhãn mục 4 thành "Lựa chọn giải pháp can thiệp, đóng bãi" |
 
 **Kiểm tra đã chạy:**
 - `python -m unittest discover -s tests -v`: đạt 4/4 test.

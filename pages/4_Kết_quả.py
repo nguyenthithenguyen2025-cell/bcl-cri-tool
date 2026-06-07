@@ -12,11 +12,10 @@ from utils.charts import (
 from utils.sidebar import render_sidebar
 from utils.ui import apply_global_styles, render_page_header
 
-st.set_page_config(page_title="Kết quả — BCL-CRI Tool", layout="wide")
 apply_global_styles()
 render_sidebar()
 render_page_header(
-    "Kết quả và phân tích",
+    "Lựa chọn giải pháp can thiệp, đóng bãi",
     "Xem chỉ số H/P/R/CRI, cấp rủi ro, biểu đồ phân tích và nhóm giải pháp đóng bãi khuyến nghị "
     "cho từng bãi chôn lấp.",
     section="Bước 04 — Kết quả và giải pháp",

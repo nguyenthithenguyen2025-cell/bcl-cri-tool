@@ -6,7 +6,6 @@ from utils.session import get_all_bcl, count_bcl, export_session_json, import_se
 from utils.sidebar import render_sidebar
 from utils.ui import apply_global_styles, render_page_header
 
-st.set_page_config(page_title="Xuất báo cáo — BCL-CRI Tool", layout="wide")
 apply_global_styles()
 render_sidebar()
 render_page_header(

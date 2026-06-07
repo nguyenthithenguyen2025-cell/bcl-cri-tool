@@ -5,7 +5,6 @@ import streamlit as st
 from utils.sidebar import render_sidebar
 from utils.ui import APP_NAME, apply_global_styles, render_page_header, render_workflow_overview
 
-st.set_page_config(page_title="Giới thiệu — BCL-CRI Tool", layout="wide")
 apply_global_styles()
 render_sidebar()
 

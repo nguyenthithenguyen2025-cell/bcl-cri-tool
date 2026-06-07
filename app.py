@@ -1,20 +1,6 @@
 # -*- coding: utf-8 -*-
-"""
-BCL-CRI Decision Support Tool — Entry point.
-Chạy: streamlit run app.py
-"""
-
 import streamlit as st
-from utils.ui import (
-    APP_NAME,
-    APP_VERSION,
-    HOST_ORG,
-    PROJECT_NAME,
-    apply_global_styles,
-    render_page_header,
-    render_status_summary,
-    render_workflow_overview,
-)
+from utils.ui import APP_NAME, APP_VERSION, HOST_ORG, PROJECT_NAME
 
 st.set_page_config(
     page_title=APP_NAME,
@@ -33,29 +19,18 @@ st.set_page_config(
     },
 )
 
-apply_global_styles()
+pages = [
+    st.Page("pages/0_Tổng_quan_công_cụ.py", title="Tổng quan công cụ"),
+    st.Page("pages/1_Giới_thiệu.py", title="Giới thiệu và hướng dẫn"),
+    st.Page("pages/2_Khai_báo_BCL.py", title="Khai báo bãi chôn lấp"),
+    st.Page("pages/3_Nhập_CRI.py", title="Đánh giá CRI"),
+    st.Page(
+        "pages/4_Kết_quả.py",
+        title="Lựa chọn giải pháp can thiệp, đóng bãi",
+    ),
+    st.Page("pages/5_So_sánh_BCL.py", title="So sánh bãi chôn lấp"),
+    st.Page("pages/6_Xuất_báo_cáo.py", title="Xuất hồ sơ và báo cáo"),
+]
 
-# ── Sidebar — điều hướng và thông tin session
-from utils.sidebar import render_sidebar
-render_sidebar()
-
-# ── Trang chủ (khi truy cập app.py trực tiếp)
-render_page_header(
-    APP_NAME,
-    "Ứng dụng hỗ trợ cơ quan quản lý, địa phương và đơn vị tư vấn đánh giá rủi ro "
-    "bãi chôn lấp chất thải rắn sinh hoạt, phân loại mức độ ưu tiên và lựa chọn nhóm "
-    "giải pháp đóng bãi phù hợp.",
-    section="Tổng quan",
-)
-
-render_status_summary()
-
-st.divider()
-st.markdown("### Quy trình sử dụng")
-render_workflow_overview()
-
-st.divider()
-st.info(
-    "Bắt đầu tại trang **Khai báo BCL** trong thanh điều hướng bên trái. "
-    "Công cụ cho phép nhập nhiều bãi chôn lấp, so sánh mức độ rủi ro và xuất hồ sơ kỹ thuật."
-)
+current_page = st.navigation(pages)
+current_page.run()
