@@ -25,3 +25,6 @@ python -m unittest discover -s tests -v
 
 - [PROJECT_BRIEF.md](PROJECT_BRIEF.md) — Mô tả đầy đủ: mục tiêu, phương pháp CRI, kiến trúc
 - [DEVELOPMENT_PLAN.md](DEVELOPMENT_PLAN.md) — Kế hoạch phát triển 5 sprint
+- [docs/HUONG_DAN_SU_DUNG_NGAN.md](docs/HUONG_DAN_SU_DUNG_NGAN.md) — Hướng dẫn sử dụng ngắn cho cán bộ địa phương
+- [docs/KICH_BAN_TRINH_DIEN_15_PHUT.md](docs/KICH_BAN_TRINH_DIEN_15_PHUT.md) — Kịch bản trình diễn 15 phút
+- [docs/CHECKLIST_KIEM_THU_TRUOC_DEMO.md](docs/CHECKLIST_KIEM_THU_TRUOC_DEMO.md) — Checklist kiểm thử trước khi demo

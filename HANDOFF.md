@@ -1,9 +1,9 @@
 # HANDOFF NOTE — BCL-CRI Decision Support Tool
 
 **Ngày cập nhật:** 2026-06-07 (Phiên 8 — ĐANG NÂNG CẤP)
-**Dự án:** Công cụ Hỗ trợ Quyết định Đóng bãi Chôn lấp CTRSH
+**Dự án:** Công cụ hỗ trợ lựa chọn giải pháp đóng bãi chôn lấp CTRSH
 **Thư mục dự án:** `D:\1. AI_landfill\landfill-cri-tool\`
-**Git:** Branch `master` — Commit gần nhất: `aed46db`
+**Git:** Branch `master` — Commit gần nhất: `7340732`
 **GitHub:** https://github.com/nguyenthithenguyen2025-cell/bcl-cri-tool
 **App URL:** https://bcl-cri-tool-f7bzdcw6lzg6yz92ouerqz.streamlit.app
 
@@ -22,9 +22,9 @@
 | Phiên 5 | Tinh chỉnh UI/UX theo phản hồi | ✅ HOÀN THÀNH |
 | Phiên 6 | Cải thiện Trang 1, thêm HTML export, sửa lỗi Word | ✅ HOÀN THÀNH — commit `2cf640d` |
 | **Phiên 7** | **Lưu/tải phiên làm việc dạng JSON (persistence)** | ✅ HOÀN THÀNH — commit `f606d64` |
-| **Phiên 8** | **Chỉnh sửa lại BCL đã nhập, chuẩn hóa giao diện bước 1** | ⏳ ĐANG THỰC HIỆN — chưa commit |
+| **Phiên 8** | **Nâng cấp giao diện, validation, phân tích, báo cáo và tài liệu demo** | ⏳ ĐANG THỰC HIỆN — đã push đến commit `7340732`, đang bổ sung Bước 6 |
 
-**Git working tree hiện tại:** Có thay đổi chưa commit — đang nâng cấp luồng chỉnh sửa BCL đã nhập.
+**Git working tree hiện tại:** Có thay đổi chưa commit — đang bổ sung tài liệu kiểm thử và demo.
 
 ---
 
@@ -66,6 +66,11 @@
 | `export/html_export.py` | Nâng cấp HTML/PDF với trang bìa A4, metadata báo cáo và phần thông tin báo cáo |
 | `export/excel_export.py` | Thêm sheet "0. Thông tin báo cáo", bỏ trường Huyện, bổ sung tọa độ và tóm tắt phân tích chuyên môn |
 | `tests/test_core_exports.py` | Bổ sung kiểm thử metadata báo cáo trong HTML và Excel |
+| `docs/HUONG_DAN_SU_DUNG_NGAN.md` | Thêm hướng dẫn sử dụng ngắn cho cán bộ địa phương |
+| `docs/KICH_BAN_TRINH_DIEN_15_PHUT.md` | Thêm kịch bản trình diễn 15 phút |
+| `docs/CHECKLIST_KIEM_THU_TRUOC_DEMO.md` | Thêm checklist kiểm thử trước khi demo |
+| `.gitignore` | Bỏ qua thư mục `image/` sinh ra từ ảnh trong trao đổi, không thuộc mã nguồn app |
+| `README.md` | Bổ sung liên kết đến tài liệu hướng dẫn, kịch bản demo và checklist kiểm thử |
 
 **Kiểm tra đã chạy:**
 - `python -m unittest discover -s tests -v`: đạt 10/10 test.
