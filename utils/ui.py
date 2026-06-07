@@ -170,7 +170,7 @@ def render_branding_banner() -> None:
         mime, data = _img_to_base64(logos[0]["path"])
         logo_html = (
             f'<img src="data:{mime};base64,{data}" '
-            'style="height:56px;max-width:180px;object-fit:contain;'
+            'style="height:80px;max-width:220px;object-fit:contain;'
             'display:block;filter:brightness(0) invert(1);" alt="Logo"/>'
         )
 
