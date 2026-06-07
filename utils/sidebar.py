@@ -15,25 +15,13 @@ from utils.ui import (
     PROJECT_NAME,
     get_available_branding_logos,
     get_portfolio_status,
+    _img_to_base64,
 )
 
 
 def render_sidebar():
     """Hiển thị sidebar thống nhất: danh sách BCL và căn cứ pháp lý."""
     with st.sidebar:
-        logos = get_available_branding_logos()
-        if logos:
-            if len(logos) == 1:
-                st.image(str(logos[0]["path"]), use_container_width=True)
-            else:
-                logo_cols = st.columns(len(logos))
-                for col, logo in zip(logo_cols, logos):
-                    with col:
-                        st.image(str(logo["path"]), use_container_width=True)
-        else:
-            legacy_logo_path = os.path.join(os.path.dirname(__file__), "..", "assets", "logo.png")
-            if os.path.exists(legacy_logo_path):
-                st.image(legacy_logo_path)
         st.markdown(f"### {APP_SHORT_NAME}")
         st.caption(APP_NAME)
         st.caption(f"Phiên bản {APP_VERSION} | {PROJECT_NAME}")

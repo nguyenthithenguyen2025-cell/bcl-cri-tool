@@ -8,6 +8,7 @@ from utils.ui import (
     APP_NAME,
     apply_global_styles,
     render_branding_banner,
+    render_page_footer,
     render_page_header,
     render_status_summary,
     render_workflow_overview,
@@ -37,3 +38,5 @@ st.info(
     "Bắt đầu tại trang **Khai báo BCL** trong thanh điều hướng bên trái. "
     "Công cụ cho phép nhập nhiều bãi chôn lấp, so sánh mức độ rủi ro và xuất hồ sơ kỹ thuật."
 )
+
+render_page_footer()

@@ -5,7 +5,7 @@ import streamlit as st
 from utils.validators import get_bcl_info_warnings, validate_bcl_info
 from utils.sidebar import render_sidebar
 from utils.session import get_all_bcl, get_bcl, set_active_bcl
-from utils.ui import apply_global_styles, render_page_header
+from utils.ui import apply_global_styles, render_page_footer, render_page_header
 
 apply_global_styles()
 render_sidebar()
@@ -299,3 +299,5 @@ with col_btn:
             st.session_state.pop(key, None)
         st.session_state["bcl_active_id"] = None
         st.rerun()
+
+render_page_footer()

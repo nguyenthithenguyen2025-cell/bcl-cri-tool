@@ -4,7 +4,7 @@
 import streamlit as st
 from utils.session import get_all_bcl, count_bcl, export_session_json, import_session_json
 from utils.sidebar import render_sidebar
-from utils.ui import apply_global_styles, render_page_header
+from utils.ui import apply_global_styles, render_page_footer, render_page_header
 
 apply_global_styles()
 render_sidebar()
@@ -263,3 +263,5 @@ st.info("""
 - **JSON:** Lưu toàn bộ phiên làm việc. Tải lại file này để tiếp tục mà không cần nhập lại.
 - Nếu Word hiển thị font lỗi, hãy kiểm tra font chữ đã được cài đặt trên máy tính.
 """)
+
+render_page_footer()

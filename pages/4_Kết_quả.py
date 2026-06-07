@@ -10,7 +10,7 @@ from utils.charts import (
     score_heatmap,
 )
 from utils.sidebar import render_sidebar
-from utils.ui import apply_global_styles, render_page_header
+from utils.ui import apply_global_styles, render_page_footer, render_page_header
 
 apply_global_styles()
 render_sidebar()
@@ -221,3 +221,5 @@ with col_nx1:
     st.info("👉 Thêm BCL khác: quay lại trang **Khai báo BCL**")
 with col_nx2:
     st.info("👉 So sánh tất cả BCL: chuyển sang trang **So sánh BCL**")
+
+render_page_footer()

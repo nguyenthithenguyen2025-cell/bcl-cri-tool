@@ -5,7 +5,7 @@ import streamlit as st
 import pandas as pd
 from utils.session import get_bcl_summary_list, count_bcl
 from utils.sidebar import render_sidebar
-from utils.ui import apply_global_styles, render_page_header
+from utils.ui import apply_global_styles, render_page_footer, render_page_header
 
 apply_global_styles()
 render_sidebar()
@@ -339,3 +339,5 @@ if not df.empty:
         file_name="Bang_xep_hang_BCL_CRI.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     )
+
+render_page_footer()

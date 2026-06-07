@@ -3,7 +3,7 @@
 
 import streamlit as st
 from utils.sidebar import render_sidebar
-from utils.ui import APP_NAME, apply_global_styles, render_page_header, render_workflow_overview
+from utils.ui import APP_NAME, apply_global_styles, render_page_footer, render_page_header, render_workflow_overview
 
 apply_global_styles()
 render_sidebar()
@@ -176,3 +176,5 @@ st.caption(
     "Nguồn: Đề tài TNMT.2024.05.05, Trường Đại học Thủy Lợi (2026). "
     "Căn cứ pháp lý: Điều 32, TT 02/2022/TT-BTNMT; QCVN 96:2025/BNNMT."
 )
+
+render_page_footer()

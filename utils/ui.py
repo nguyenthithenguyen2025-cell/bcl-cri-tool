@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import base64
 from pathlib import Path
 
 import streamlit as st
@@ -33,7 +34,7 @@ BRANDING_LOGOS = [
         "stem": "logo_co_quan_phoi_hop",
     },
 ]
-BRANDING_EXTENSIONS = [".png", ".webp", ".jpg", ".jpeg", ".svg"]
+BRANDING_EXTENSIONS = [".webp", ".png", ".jpg", ".jpeg", ".svg"]
 
 
 WORKFLOW_STEPS = [
@@ -53,71 +54,79 @@ def apply_global_styles() -> None:
   #MainMenu {visibility: hidden;}
   footer {visibility: hidden;}
   .block-container {
-    padding-top: 1.8rem;
+    padding-top: 0.75rem;
     padding-bottom: 2rem;
   }
   .app-eyebrow {
-    color: #52616b;
-    font-size: 0.88rem;
-    font-weight: 600;
+    color: #3d5166;
+    font-size: 0.82rem;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0;
-    margin-bottom: 0.25rem;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.2rem;
   }
   .app-page-title {
-    color: #12344d;
-    font-size: 1.85rem;
+    color: #0d2e45;
+    font-size: 1.75rem;
     font-weight: 700;
     line-height: 1.25;
     margin: 0 0 0.35rem 0;
   }
   .app-page-desc {
-    color: #425466;
-    font-size: 1rem;
-    line-height: 1.55;
+    color: #2c3e52;
+    font-size: 0.97rem;
+    line-height: 1.6;
     margin-bottom: 1rem;
     max-width: 1120px;
   }
   .status-card {
-    border: 1px solid #d8e1ea;
+    border: 1px solid #c8d6e2;
+    border-top: 3px solid #1a4a6e;
     border-radius: 8px;
     padding: 0.85rem 0.95rem;
     background: #ffffff;
+    box-shadow: 0 1px 4px rgba(13,46,69,0.07);
   }
   .status-label {
-    color: #52616b;
+    color: #3d5166;
     font-size: 0.78rem;
+    font-weight: 600;
     margin-bottom: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
   }
   .status-value {
-    color: #12344d;
-    font-size: 1.35rem;
+    color: #0d2e45;
+    font-size: 1.4rem;
     font-weight: 700;
   }
   .workflow-card {
-    border: 1px solid #d8e1ea;
-    border-left: 4px solid #1f77b4;
+    border: 1px solid #c8d6e2;
+    border-left: 4px solid #1a4a6e;
     border-radius: 8px;
     padding: 0.85rem 0.95rem;
-    background: #f8fbfd;
+    background: #f4f8fc;
     min-height: 128px;
+    box-shadow: 0 1px 4px rgba(13,46,69,0.06);
   }
   .workflow-step {
-    color: #1f77b4;
-    font-size: 0.78rem;
+    color: #1a4a6e;
+    font-size: 0.75rem;
     font-weight: 700;
-    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.3rem;
   }
   .workflow-title {
-    color: #12344d;
+    color: #0d2e45;
     font-size: 0.95rem;
     font-weight: 700;
     margin-bottom: 0.35rem;
   }
   .workflow-desc {
-    color: #425466;
-    font-size: 0.84rem;
-    line-height: 1.45;
+    color: #2c3e52;
+    font-size: 0.83rem;
+    line-height: 1.5;
   }
 </style>
 """,
@@ -145,19 +154,67 @@ def get_available_branding_logos() -> list[dict]:
     return available
 
 
-def render_branding_banner() -> None:
-    """Hiển thị dải logo nhận diện ở đầu trang nếu có file logo."""
-    logos = get_available_branding_logos()
-    if not logos:
-        return
+def _img_to_base64(path: Path) -> tuple[str, str]:
+    """Trả về (data_uri_prefix, base64_string) cho file ảnh."""
+    ext = path.suffix.lower().lstrip(".")
+    mime = {"png": "image/png", "webp": "image/webp", "jpg": "image/jpeg", "jpeg": "image/jpeg"}.get(ext, "image/png")
+    data = base64.b64encode(path.read_bytes()).decode()
+    return mime, data
 
-    st.image(str(logos[0]["path"]), width=520)
+
+def render_branding_banner() -> None:
+    """Hiển thị banner nhận diện chuyên nghiệp ở đầu trang."""
     st.markdown(
         f"""
-<div style="margin-top:0.2rem;margin-bottom:0.8rem;">
-  <div style="color:#52616b;font-size:0.82rem;font-weight:600;">{logos[0]['label']}</div>
-  <div style="color:#12344d;font-size:1.05rem;font-weight:700;">{HOST_ORG}</div>
-  <div style="color:#52616b;font-size:0.9rem;">{PROJECT_NAME}</div>
+<div style="
+    background:linear-gradient(135deg,#0d2e45 0%,#1a4d72 100%);
+    border-radius:10px;
+    padding:1rem 1.5rem;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:1rem;
+    margin-bottom:1.5rem;
+    box-shadow:0 3px 12px rgba(13,46,69,0.28);
+">
+  <div style="min-width:0;">
+    <div style="color:rgba(255,255,255,0.62);font-size:0.67rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.1rem;">Đơn vị chủ trì</div>
+    <div style="color:#ffffff;font-size:1.0rem;font-weight:700;line-height:1.3;">{HOST_ORG}</div>
+    <div style="color:rgba(255,255,255,0.72);font-size:0.80rem;margin-top:0.12rem;">{PROJECT_NAME}</div>
+  </div>
+  <div style="text-align:right;flex-shrink:0;padding-left:1rem;border-left:1px solid rgba(255,255,255,0.2);">
+    <div style="color:rgba(255,255,255,0.62);font-size:0.67rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.1rem;">Công cụ hỗ trợ</div>
+    <div style="color:#ffffff;font-size:1.0rem;font-weight:700;">{APP_SHORT_NAME}</div>
+    <div style="color:rgba(255,255,255,0.62);font-size:0.75rem;margin-top:0.12rem;">Phiên bản {APP_VERSION}</div>
+  </div>
+</div>
+""",
+        unsafe_allow_html=True,
+    )
+
+
+def render_page_footer() -> None:
+    """Hiển thị footer pháp lý và phiên bản ở cuối mỗi trang."""
+    st.markdown(
+        f"""
+<div style="
+    margin-top:2.5rem;
+    padding:0.65rem 1rem;
+    border-top:2px solid #c8d6e2;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:0.4rem;
+    background:#f4f8fc;
+    border-radius:0 0 8px 8px;
+">
+  <div style="color:#5a7085;font-size:0.73rem;line-height:1.5;">
+    Căn cứ pháp lý: Điều 32 TT 02/2022/TT-BTNMT &nbsp;·&nbsp; QCVN 96:2025/BNNMT &nbsp;·&nbsp; TCVN 13766:2023
+  </div>
+  <div style="color:#5a7085;font-size:0.73rem;text-align:right;">
+    {APP_SHORT_NAME} v{APP_VERSION} &nbsp;·&nbsp; {HOST_ORG} &nbsp;·&nbsp; 2026
+  </div>
 </div>
 """,
         unsafe_allow_html=True,

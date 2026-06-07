@@ -7,7 +7,7 @@ from core.calculator import calculate_cri
 from core.classifier import classify_and_recommend, get_top_risk_params
 from utils.session import add_bcl, update_bcl, get_all_bcl, get_bcl, set_active_bcl
 from utils.sidebar import render_sidebar
-from utils.ui import apply_global_styles, render_page_header
+from utils.ui import apply_global_styles, render_page_footer, render_page_header
 from utils.validators import validate_missing_notes, validate_scores
 
 apply_global_styles()
@@ -386,3 +386,5 @@ with col_b:
                 },
             )
         st.rerun()
+
+render_page_footer()
