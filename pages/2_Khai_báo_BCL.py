@@ -32,7 +32,7 @@ st.divider()
 # ═══════════════════════════════════════════════════════
 # PHẦN 1 — THÔNG TIN ĐỊNH DANH
 # ═══════════════════════════════════════════════════════
-st.subheader("1. Thông tin định danh")
+st.subheader("1. Thông tin chung về bãi chôn lấp")
 col1, col2 = st.columns(2)
 
 with col1:
@@ -46,11 +46,6 @@ with col1:
         value=draft.get("tinh", ""),
         placeholder="Ví dụ: Hà Nội, TP. Hồ Chí Minh...",
     )
-    huyen = st.text_input(
-        "Huyện / Quận / Thị xã",
-        value=draft.get("huyen", ""),
-    )
-
 with col2:
     xa = st.text_input(
         "Xã / Phường / Thị trấn",
@@ -192,7 +187,6 @@ if btn_save:
     info = {
         "ten_bcl": ten_bcl.strip(),
         "tinh": tinh.strip(),
-        "huyen": huyen.strip(),
         "xa": xa.strip(),
         "toa_do_lat": toa_do_lat if toa_do_lat else None,
         "toa_do_lon": toa_do_lon if toa_do_lon else None,
