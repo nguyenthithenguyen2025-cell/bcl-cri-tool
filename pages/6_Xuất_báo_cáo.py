@@ -121,12 +121,46 @@ if st.button("📥 Tạo file Word", type="primary"):
 st.divider()
 
 # ════════════════════════════════════════════════════════
+# XUẤT HTML / PDF
+# ════════════════════════════════════════════════════════
+st.subheader("5. Xuất HTML → In thành PDF")
+st.caption(
+    "Tải file HTML → mở bằng trình duyệt (Chrome/Edge) → Ctrl+P → 'Save as PDF'. "
+    "Hỗ trợ đầy đủ tiếng Việt, không cần cài thêm phần mềm."
+)
+
+if st.button("📥 Tạo file HTML (in PDF)", type="primary"):
+    from export.html_export import export_to_html
+
+    with st.spinner("Đang tạo file HTML..."):
+        try:
+            for entry in selected_entries:
+                html_bytes = export_to_html(
+                    entry,
+                    include_solution=include_solution_detail,
+                    include_legal=include_legal,
+                )
+                ten = entry["info"].get("ten_bcl", "BCL").replace(" ", "_")
+                st.download_button(
+                    label=f"💾 Tải xuống HTML — {entry['info'].get('ten_bcl', '')}",
+                    data=html_bytes,
+                    file_name=f"BaoCao_CRI_{ten}.html",
+                    mime="text/html; charset=utf-8",
+                    key=f"html_{entry['id']}",
+                )
+            st.success("✅ File HTML đã sẵn sàng. Mở file bằng trình duyệt rồi nhấn Ctrl+P để in thành PDF.")
+        except Exception as e:
+            st.error(f"Lỗi khi tạo HTML: {e}")
+
+st.divider()
+
+# ════════════════════════════════════════════════════════
 # LƯU Ý
 # ════════════════════════════════════════════════════════
 st.info("""
 **Lưu ý khi xuất báo cáo:**
 - **Excel:** Phù hợp để lưu trữ và xử lý số liệu thêm.
-- **Word:** Phù hợp để in ấn, trình ký hoặc đính kèm hồ sơ kỹ thuật.
-- **PDF:** Có thể in trực tiếp từ file Word (File → Print → Save as PDF trong Microsoft Word).
+- **Word:** Phù hợp để trình ký hoặc đính kèm hồ sơ kỹ thuật (định dạng .docx).
+- **HTML → PDF:** Mở file HTML bằng Chrome/Edge → Ctrl+P → Destination: Save as PDF → Print. Hỗ trợ đầy đủ tiếng Việt.
 - Nếu Word hiển thị font lỗi, hãy kiểm tra font chữ đã được cài đặt trên máy tính.
 """)

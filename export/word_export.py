@@ -103,7 +103,6 @@ def export_to_word(
     fields = [
         ("Tên bãi chôn lấp", info.get("ten_bcl")),
         ("Tỉnh/Thành phố", info.get("tinh")),
-        ("Huyện/Quận", info.get("huyen")),
         ("Xã/Phường", info.get("xa")),
         ("Loại BCL", "Không hợp vệ sinh (BCL-KHVS)" if info.get("loai_bcl") == "KHVS" else "Hợp vệ sinh (BCL-HVS)"),
         ("Diện tích (ha)", info.get("dien_tich_ha")),

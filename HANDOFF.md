@@ -1,9 +1,9 @@
 # HANDOFF NOTE — BCL-CRI Decision Support Tool
 
-**Ngày cập nhật:** 2026-06-07 (Phiên 5)
+**Ngày cập nhật:** 2026-06-07 (Phiên 6)
 **Dự án:** Công cụ Hỗ trợ Quyết định Đóng bãi Chôn lấp CTRSH
 **Thư mục dự án:** `D:\1. AI_landfill\landfill-cri-tool\`
-**Git:** Branch `master` — Commit hiện tại: `54b7f05`
+**Git:** Branch `master` — Commit hiện tại: `54b7f05` *(chưa commit phiên 6)*
 **GitHub:** https://github.com/nguyenthithenguyen2025-cell/bcl-cri-tool
 **App URL:** https://bcl-cri-tool-f7bzdcw6lzg6yz92ouerqz.streamlit.app
 
@@ -11,8 +11,8 @@
 
 ## 1. Trạng thái dự án hiện tại
 
-| Sprint | Nội dung | Trạng thái |
-|--------|----------|-----------|
+| Sprint / Phiên | Nội dung | Trạng thái |
+|----------------|----------|-----------|
 | Sprint 1 | Core logic (calculator, classifier, config) | ✅ HOÀN THÀNH |
 | Sprint 2 | Giao diện 6 trang Streamlit | ✅ HOÀN THÀNH |
 | Sprint 3 | Biểu đồ (6 loại) + Export Excel/Word | ✅ HOÀN THÀNH |
@@ -20,18 +20,62 @@
 | Sprint 5 | HTML demo để kiểm tra trước | ✅ HOÀN THÀNH |
 | Sprint 6 | Deploy GitHub + Streamlit Cloud | ✅ HOÀN THÀNH |
 | Phiên 5 | Tinh chỉnh UI/UX theo phản hồi | ✅ HOÀN THÀNH |
+| **Phiên 6** | **Cải thiện Trang 1, thêm HTML export, sửa lỗi Word** | ⚠️ CÒN CHƯA COMMIT |
 
-**Git working tree hiện tại:** Sạch — tất cả file đã commit và push.
+**Git working tree hiện tại:** Có 4 file chưa commit (xem mục 3).
 
 ---
 
 ## 2. Lịch sử thay đổi theo phiên
 
-### Phiên 5 — 2026-06-07 (mới nhất)
+### Phiên 6 — 2026-06-07 (MỚI NHẤT — CHƯA COMMIT)
+
+#### 2.1 Sửa lỗi — `export/word_export.py`
+
+**Vấn đề:** Trường "Huyện/Quận" đã bị xóa khỏi form Trang 2 (Phiên 5) nhưng vẫn còn trong bảng xuất Word, gây ra dòng "—" thừa.
+
+**Thay đổi:** Xóa dòng `("Huyện/Quận", info.get("huyen"))` khỏi danh sách `fields` trong hàm `export_to_word()`.
+
+#### 2.2 Cải thiện Trang 1 — `pages/1_Giới_thiệu.py`
+
+Viết lại toàn bộ trang, gồm:
+
+| Phần | Thay đổi |
+|------|---------|
+| Callout nhanh | Thêm `st.info()` hướng dẫn bắt đầu ngay |
+| Layout 2 cột | Mô tả mục đích (trái) + bảng phạm vi áp dụng (phải) |
+| Cards 5 bước | Styled HTML cards với viền xanh, nền nhạt, icon lớn — thay thế 5 cột markdown thô |
+| Expander CRI | Thêm tabs 3 nhóm (H / P / R) với bảng 14 thông số đầy đủ ngưỡng điểm |
+| Lưu ý | Chia 2 cột: Về dữ liệu đầu vào / Về lưu trữ và xuất kết quả |
+
+#### 2.3 Thêm HTML export — `export/html_export.py` (file mới)
+
+**Chức năng:** Tạo báo cáo kỹ thuật dạng HTML hoàn chỉnh, hỗ trợ đầy đủ tiếng Việt, in thành PDF qua trình duyệt.
+
+**Không cần dependency mới** — dùng thư viện chuẩn Python, không thêm vào `requirements.txt`.
+
+**Nội dung báo cáo HTML:**
+1. Thông tin bãi chôn lấp (bảng)
+2. Kết quả CRI: badge màu theo cấp, bảng H/P/R, bảng 14 thông số
+3. Giải pháp khuyến nghị (nếu bật)
+4. Căn cứ pháp lý (nếu bật)
+5. Nút "🖨️ In / Lưu PDF" cố định góc phải (ẩn khi in)
+6. CSS print-ready: layout A4, font Times New Roman
+
+**Cách dùng:** Người dùng tải file `.html` → mở bằng Chrome/Edge → Ctrl+P → Destination: "Save as PDF" → Print.
+
+#### 2.4 Cập nhật Trang 6 — `pages/6_Xuất_báo_cáo.py`
+
+Thêm Section 5 "Xuất HTML → In thành PDF" với nút tải xuống + hướng dẫn in PDF.
+Cập nhật phần "Lưu ý" để mô tả cách in PDF từ HTML.
+
+---
+
+### Phiên 5 — 2026-06-07
 
 **Commit:** `54b7f05` — UX: show content on all pages even when no BCL data exists
 
-#### 2.1 Sửa giao diện `pages/2_Khai_báo_BCL.py`
+#### Sửa giao diện `pages/2_Khai_báo_BCL.py`
 
 | Thay đổi | Chi tiết |
 |----------|---------|
@@ -39,43 +83,57 @@
 | Xóa trường Huyện/Quận/Thị xã | Bỏ `huyen` khỏi form và khỏi dict lưu kết quả |
 | Sửa nhãn trường Xã | "Xã / Phường / Thị trấn" → **"Xã / Phường"** |
 
-#### 2.2 Cải thiện UX khi chưa có dữ liệu — 4 trang
-
-**Vấn đề cũ:** Trang 3, 4, 5, 6 hoàn toàn trắng trơn nếu người dùng chưa khai báo BCL, gây bất tiện và khó hiểu.
-
-**Giải pháp đã áp dụng:**
+#### Cải thiện UX khi chưa có dữ liệu — 4 trang
 
 | Trang | Thay đổi |
 |-------|---------|
-| **Trang 3 — Nhập CRI** | Bỏ `st.stop()` — hiện đầy đủ form 14 thông số ngay cả khi chưa khai báo BCL; thay cảnh báo cứng bằng thông báo nhẹ (info) |
-| **Trang 4 — Kết quả** | Giữ `st.stop()` nhưng thêm mô tả các nội dung sẽ xuất hiện (thẻ CRI, 4 biểu đồ, phân tích, giải pháp) |
-| **Trang 5 — So sánh** | Giữ `st.stop()` nhưng thêm mô tả (bảng xếp hạng, bộ lọc, 2 biểu đồ, xuất Excel) |
-| **Trang 6 — Xuất báo cáo** | Giữ `st.stop()` nhưng thêm mô tả 3 định dạng xuất (Excel, Word, PDF) |
+| **Trang 3 — Nhập CRI** | Bỏ `st.stop()` — hiện form đầy đủ ngay cả khi chưa khai báo BCL |
+| **Trang 4 — Kết quả** | Thêm mô tả nội dung sẽ xuất hiện |
+| **Trang 5 — So sánh** | Thêm mô tả nội dung sẽ xuất hiện |
+| **Trang 6 — Xuất báo cáo** | Thêm mô tả 3 định dạng xuất |
 
 ---
 
 ### Phiên 4 — 2026-06-07
 
-- Commit 2 file tồn đọng (`.gitignore`, `HANDOFF.md`)
 - Tạo GitHub repo public: `nguyenthithenguyen2025-cell/bcl-cri-tool`
-- Push toàn bộ code lên GitHub qua `gh repo create`
-- Deploy lên Streamlit Community Cloud (thao tác web thủ công)
-- Test thủ công 5 bước — không có lỗi
+- Push toàn bộ code lên GitHub
+- Deploy lên Streamlit Community Cloud
 - URL app: https://bcl-cri-tool-f7bzdcw6lzg6yz92ouerqz.streamlit.app
-
-### Phiên 3 — 2026-06-07
-
-- Tạo file HTML demo `bcl_cri_demo.html` (không track trong git)
-- Cập nhật `.gitignore`
-
-### Phiên 1–2 — 2026-06-07
-
-- Xây dựng toàn bộ app Streamlit (Sprint 1–4): 31 files
-- Core logic, giao diện 6 trang, 6 biểu đồ, xuất Excel/Word
 
 ---
 
-## 3. Tất cả file dự án (31 files trong git)
+## 3. Files thay đổi CHƯA COMMIT (Phiên 6)
+
+```
+Trạng thái git hiện tại:
+  modified:   export/word_export.py          ← xóa trường huyen
+  modified:   pages/1_Giới_thiệu.py          ← viết lại toàn bộ (~245 dòng)
+  modified:   pages/6_Xuất_báo_cáo.py        ← thêm section 5 (HTML export)
+  untracked:  export/html_export.py          ← file mới hoàn toàn
+```
+
+**Lệnh commit cần chạy** (chưa push):
+
+```bash
+git add export/word_export.py export/html_export.py "pages/1_Giới_thiệu.py" "pages/6_Xuất_báo_cáo.py"
+
+git commit -m "UI/UX: cải thiện Trang 1, thêm HTML export, sửa lỗi Word export
+
+- Trang 1: styled cards quy trình 5 bước, bảng 14 thông số theo tab,
+  callout nhanh, thông tin phạm vi áp dụng
+- export/html_export.py: báo cáo HTML đầy đủ tiếng Việt, nút in PDF
+- Trang 6: thêm mục Xuất HTML → in thành PDF (section 5)
+- word_export.py: bỏ trường Huyện/Quận đã bị xóa khỏi form Trang 2
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+
+git push origin master
+```
+
+---
+
+## 4. Tất cả file dự án (32 files — sau phiên 6)
 
 ```
 landfill-cri-tool/
@@ -83,7 +141,7 @@ landfill-cri-tool/
 ├── requirements.txt                ✅ streamlit, plotly, pandas, openpyxl, python-docx
 ├── .streamlit/config.toml          ✅ Theme xanh dương, layout wide
 ├── .gitattributes                  ✅ UTF-8/LF cho file tiếng Việt
-├── .gitignore                      ✅ Loại trừ __pycache__, .env, bcl_cri_demo.html...
+├── .gitignore                      ✅
 │
 ├── config/
 │   ├── __init__.py
@@ -97,12 +155,12 @@ landfill-cri-tool/
 │
 ├── pages/
 │   ├── __init__.py
-│   ├── 1_Giới_thiệu.py             ✅ Trang giới thiệu + hướng dẫn
-│   ├── 2_Khai_báo_BCL.py           ✅ Form nhập thông tin BCL — đã tinh chỉnh Phiên 5
-│   ├── 3_Nhập_CRI.py               ✅ Form 14 thông số CRI — hiện cả khi chưa có BCL info
+│   ├── 1_Giới_thiệu.py             ✅ Trang giới thiệu — viết lại Phiên 6
+│   ├── 2_Khai_báo_BCL.py           ✅ Form nhập thông tin BCL
+│   ├── 3_Nhập_CRI.py               ✅ Form 14 thông số CRI
 │   ├── 4_Kết_quả.py                ✅ Dashboard + 4 biểu đồ + giải pháp
 │   ├── 5_So_sánh_BCL.py            ✅ Bảng xếp hạng + biểu đồ so sánh nhiều BCL
-│   └── 6_Xuất_báo_cáo.py           ✅ Xuất Excel (3 sheet) + Word
+│   └── 6_Xuất_báo_cáo.py           ✅ Xuất Excel + Word + HTML/PDF — cập nhật Phiên 6
 │
 ├── utils/
 │   ├── __init__.py
@@ -114,40 +172,45 @@ landfill-cri-tool/
 ├── export/
 │   ├── __init__.py
 │   ├── excel_export.py             ✅ export_to_excel() → BytesIO
-│   └── word_export.py              ✅ export_to_word() → BytesIO
+│   ├── word_export.py              ✅ export_to_word() → BytesIO — sửa lỗi Phiên 6
+│   └── html_export.py              ✅ export_to_html() → bytes — MỚI Phiên 6
 │
 ├── data/
 │   └── sample_data.json            ✅ Dữ liệu mẫu PL2.4
 │
-├── assets/                         ⏳ Thư mục rỗng (logo.png chưa có — không ảnh hưởng)
+├── assets/                         ⏳ Thư mục rỗng (logo.png chưa có)
 │
 ├── PROJECT_BRIEF.md                ✅
 ├── DEVELOPMENT_PLAN.md             ✅
 ├── README.md                       ✅
-└── HANDOFF.md                      ✅ File này
-
-── NGOÀI git (không track) ──
-└── bcl_cri_demo.html               ✅ Demo HTML kiểm tra cục bộ (trong .gitignore)
+└── HANDOFF.md                      ✅ File này (cập nhật Phiên 6)
 ```
 
 ---
 
-## 4. Vấn đề còn tồn đọng & việc cần làm tiếp
+## 5. Việc còn lại & bước tiếp theo
+
+### 5.1 Việc CẦN làm ngay (tồn đọng từ phiên 6)
+
+| Bước | Hành động | Lệnh cụ thể |
+|------|-----------|-------------|
+| 1 | **Commit + Push** toàn bộ thay đổi Phiên 6 | Dùng lệnh ở Mục 3 bên trên |
+| 2 | **Kiểm tra app** trên Streamlit Cloud (~1-2 phút sau push) | Mở https://bcl-cri-tool-f7bzdcw6lzg6yz92ouerqz.streamlit.app |
+| 3 | **Test HTML export**: nhập 1 BCL mẫu → Trang 6 → Tạo file HTML → mở bằng Chrome → Ctrl+P → Save as PDF | Kiểm tra font tiếng Việt hiển thị đúng |
+
+### 5.2 Việc còn lại (ưu tiên thấp — chưa làm)
 
 | # | Vấn đề / Tính năng | Mức ưu tiên | Ghi chú |
 |---|---------------------|-------------|---------|
-| 1 | **Logo ứng dụng** | Thấp | Đặt file tại `assets/logo.png` (~200×200px, nền trắng/trong suốt) → `utils/sidebar.py` tự nhận |
+| 1 | **Logo ứng dụng** | Thấp | Đặt file tại `assets/logo.png` (~200×200px) → `utils/sidebar.py` tự nhận |
 | 2 | **Điểm mẫu PL2.4 chênh lệch nhỏ** | Thấp | CRI = 0,6647 vs 0,662 gốc — đúng cấp, đúng giải pháp. Cập nhật `data/sample_data.json` khi có bảng điểm gốc chính xác |
-| 3 | **PDF export** | Thấp | Chưa implement — hiện người dùng xuất từ Word (File → Print → Save as PDF) |
-| 4 | **Nội dung Trang 1 — Giới thiệu** | Trung bình | Có thể bổ sung sơ đồ quy trình, mô tả phương pháp CRI chi tiết hơn |
-| 5 | **Tinh chỉnh nội dung form Trang 2** | Đang làm | Người dùng đang chỉnh từng trường theo yêu cầu thực tế |
-| 6 | **Bản đồ phân bố BCL (Trang 5)** | Thấp — v1.1 | Cần Mapbox token hoặc OpenStreetMap; tọa độ GPS tùy chọn |
-| 7 | **Lưu dữ liệu SQLite** | Thấp — v1.2 | Session state mất khi đóng tab; giải pháp tạm: xuất Excel ngay sau nhập |
-| 8 | **Phân quyền người dùng** | Thấp — v2.0 | Dùng `st-authenticator` nếu cần |
+| 3 | **Bản đồ phân bố BCL (Trang 5)** | Thấp — v1.1 | Cần Mapbox token hoặc OpenStreetMap; tọa độ GPS tùy chọn |
+| 4 | **Lưu dữ liệu SQLite** | Thấp — v1.2 | Session state mất khi đóng tab; giải pháp tạm: xuất Excel/HTML ngay sau nhập |
+| 5 | **Phân quyền người dùng** | Thấp — v2.0 | Dùng `st-authenticator` nếu cần |
 
 ---
 
-## 5. Chi tiết kỹ thuật quan trọng
+## 6. Chi tiết kỹ thuật quan trọng
 
 ### Công thức tính CRI
 
@@ -196,7 +259,7 @@ st.session_state["bcl_list"] = [
 "_cri_notes_draft"        = dict   # Draft lý do thiếu
 ```
 
-**Lưu ý quan trọng — tránh trùng BCL:**  
+**Lưu ý quan trọng — tránh trùng BCL:**
 Sau `add_bcl()` trong `pages/3_Nhập_CRI.py`, bắt buộc gán:
 ```python
 st.session_state["_bcl_active_editing_id"] = bcl_id
@@ -225,19 +288,22 @@ export_to_excel(entries: list[dict]) -> BytesIO   # 3 sheets
 
 # export/word_export.py
 export_to_word(entry: dict, include_solution=True, include_legal=True) -> BytesIO
+
+# export/html_export.py  ← MỚI (Phiên 6)
+export_to_html(entry: dict, include_solution=True, include_legal=True) -> bytes
 ```
 
 ---
 
-## 6. Lưu ý vận hành
+## 7. Lưu ý vận hành
 
-- **Session state mất khi refresh:** Hành vi mặc định của Streamlit. Người dùng cần xuất Excel/Word trước khi đóng trình duyệt.
+- **Session state mất khi refresh:** Hành vi mặc định của Streamlit. Người dùng cần xuất Excel/Word/HTML trước khi đóng trình duyệt.
 - **Streamlit Cloud tự cập nhật:** Mỗi khi push commit mới lên GitHub, Streamlit Cloud tự rebuild (~1–2 phút).
 - **Tên file tiếng Việt trên GitHub/Linux:** `.gitattributes` đã xử lý (LF line endings), hoạt động bình thường.
-- **Windows `WinError 10054`** trong `streamlit_log.txt`: Noise bình thường khi chạy local trên Windows, không xuất hiện trên Streamlit Cloud.
-- **`bcl_cri_demo.html`:** File demo cục bộ, không track trong git, không ảnh hưởng đến app.
+- **HTML export in PDF:** Yêu cầu Chrome hoặc Edge (không dùng IE/Firefox cũ). Chọn "Save as PDF" thay vì máy in vật lý để có bản PDF chất lượng cao.
+- **`bcl_cri_demo.html`:** File demo cục bộ (không phải html_export.py), không track trong git, không ảnh hưởng đến app.
 
 ---
 
-*HANDOFF.md — BCL-CRI Tool v1.0*  
-*Cập nhật: 2026-06-07 — Phiên 5 | Trạng thái: App đã deploy, đang tinh chỉnh UI theo yêu cầu*
+*HANDOFF.md — BCL-CRI Tool v1.0*
+*Cập nhật: 2026-06-07 — Phiên 6 | Trạng thái: Có thay đổi chưa commit — xem Mục 3*
