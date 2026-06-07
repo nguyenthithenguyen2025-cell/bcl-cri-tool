@@ -1,0 +1,43 @@
+{
+  "_comment": "Dữ liệu mẫu từ Ví dụ minh họa PL2.4 — Đề tài TNMT.2024.05.05, ĐH Thủy Lợi (2026). Kết quả kỳ vọng: H ≈ 0,595; P ≈ 0,673; R ≈ 0,713; CRI ≈ 0,662 → Cấp 3 (rủi ro cao) → GP 2.2",
+  "info": {
+    "ten_bcl": "BCL Thị xã Mẫu (Ví dụ PL2.4)",
+    "tinh": "Tỉnh A",
+    "huyen": "Huyện B",
+    "xa": "Xã C",
+    "toa_do_lat": null,
+    "toa_do_lon": null,
+    "loai_bcl": "KHVS",
+    "dien_tich_ha": 3.5,
+    "the_tich_m3": null,
+    "chieu_cao_m": null,
+    "nam_bat_dau": 2005,
+    "nam_ngung": 2018,
+    "ghi_chu": "Ví dụ minh họa từ Phụ lục 2.4 của Đề tài"
+  },
+  "scores": {
+    "H1": 0.50,
+    "H2": 0.75,
+    "H3": 0.50,
+    "H4": 0.75,
+    "P1": 0.75,
+    "P2": 0.75,
+    "P3": 0.50,
+    "P4": 0.75,
+    "P5": 0.75,
+    "P6": 0.50,
+    "R1": 0.75,
+    "R2": 0.75,
+    "R3": 0.50,
+    "R4": 0.75
+  },
+  "missing_notes": {},
+  "expected_result": {
+    "H": 0.595,
+    "P": 0.673,
+    "R": 0.713,
+    "CRI": 0.662,
+    "risk_level": 3,
+    "solution": "GP 2.2"
+  }
+}

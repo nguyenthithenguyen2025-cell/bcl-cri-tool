@@ -1,0 +1,125 @@
+# -*- coding: utf-8 -*-
+"""Trang 6 — Xuất báo cáo kỹ thuật (Excel, Word, PDF)."""
+
+import streamlit as st
+from utils.session import get_all_bcl, count_bcl
+from utils.sidebar import render_sidebar
+
+st.set_page_config(page_title="Xuất báo cáo — BCL-CRI Tool", layout="wide")
+render_sidebar()
+st.title("📄 Xuất báo cáo kỹ thuật")
+
+if count_bcl() == 0:
+    st.warning(
+        "⚠️ Chưa có BCL nào. Vui lòng nhập ít nhất một BCL trước khi xuất báo cáo."
+    )
+    st.stop()
+
+all_bcl = get_all_bcl()
+
+# ── Chọn BCL cần xuất
+st.subheader("1. Chọn BCL cần xuất")
+export_mode = st.radio(
+    "Phạm vi xuất:",
+    ["Chọn một BCL", "Xuất tất cả BCL"],
+    horizontal=True,
+)
+
+selected_entries = []
+if export_mode == "Chọn một BCL":
+    bcl_options = {e["id"]: f"{e['info'].get('ten_bcl', '')} ({e['id']})" for e in all_bcl}
+    sel_id = st.selectbox(
+        "Chọn BCL:",
+        options=list(bcl_options.keys()),
+        format_func=lambda x: bcl_options[x],
+    )
+    selected_entries = [e for e in all_bcl if e["id"] == sel_id]
+else:
+    selected_entries = all_bcl
+    st.info(f"Sẽ xuất tất cả {len(all_bcl)} BCL.")
+
+st.divider()
+
+# ── Tuỳ chọn báo cáo
+st.subheader("2. Nội dung báo cáo")
+include_charts = st.checkbox("Bao gồm biểu đồ (radar, gauge, bar)", value=True)
+include_solution_detail = st.checkbox("Bao gồm chi tiết giải pháp đóng bãi", value=True)
+include_legal = st.checkbox("Bao gồm căn cứ pháp lý", value=True)
+
+st.divider()
+
+# ════════════════════════════════════════════════════════
+# XUẤT EXCEL
+# ════════════════════════════════════════════════════════
+st.subheader("3. Xuất Excel (.xlsx)")
+st.caption("3 sheet: Thông tin BCL | Điểm CRI | Kết quả & Giải pháp")
+
+if st.button("📥 Tạo file Excel", type="primary"):
+    from export.excel_export import export_to_excel
+    from io import BytesIO
+
+    with st.spinner("Đang tạo file Excel..."):
+        try:
+            buf = export_to_excel(selected_entries)
+            n = len(selected_entries)
+            fname = (
+                f"CRI_{selected_entries[0]['info'].get('ten_bcl','BCL').replace(' ','_')}.xlsx"
+                if n == 1
+                else "Danh_sach_BCL_CRI.xlsx"
+            )
+            st.download_button(
+                label=f"💾 Tải xuống Excel ({n} BCL)",
+                data=buf,
+                file_name=fname,
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            )
+            st.success("✅ File Excel đã sẵn sàng.")
+        except Exception as e:
+            st.error(f"Lỗi khi tạo Excel: {e}")
+
+st.divider()
+
+# ════════════════════════════════════════════════════════
+# XUẤT WORD
+# ════════════════════════════════════════════════════════
+st.subheader("4. Xuất Word (.docx)")
+st.caption("Báo cáo kỹ thuật đầy đủ theo mẫu: thông tin BCL, bảng CRI, giải pháp, căn cứ pháp lý.")
+
+if st.button("📥 Tạo file Word", type="primary"):
+    from export.word_export import export_to_word
+
+    with st.spinner("Đang tạo file Word..."):
+        try:
+            for entry in selected_entries:
+                buf = export_to_word(
+                    entry,
+                    include_solution=include_solution_detail,
+                    include_legal=include_legal,
+                )
+                ten = entry["info"].get("ten_bcl", "BCL").replace(" ", "_")
+                st.download_button(
+                    label=f"💾 Tải xuống Word — {entry['info'].get('ten_bcl', '')}",
+                    data=buf,
+                    file_name=f"BaoCao_CRI_{ten}.docx",
+                    mime=(
+                        "application/vnd.openxmlformats-officedocument"
+                        ".wordprocessingml.document"
+                    ),
+                    key=f"word_{entry['id']}",
+                )
+            st.success("✅ File Word đã sẵn sàng.")
+        except Exception as e:
+            st.error(f"Lỗi khi tạo Word: {e}")
+
+st.divider()
+
+# ════════════════════════════════════════════════════════
+# LƯU Ý
+# ════════════════════════════════════════════════════════
+st.info("""
+**Lưu ý khi xuất báo cáo:**
+- **Excel:** Phù hợp để lưu trữ và xử lý số liệu thêm.
+- **Word:** Phù hợp để in ấn, trình ký hoặc đính kèm hồ sơ kỹ thuật.
+- **PDF:** Có thể in trực tiếp từ file Word (File → Print → Save as PDF trong Microsoft Word).
+- Nếu Word hiển thị font lỗi, hãy kiểm tra font chữ đã được cài đặt trên máy tính.
+""")

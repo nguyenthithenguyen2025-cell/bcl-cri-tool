@@ -1,0 +1,9 @@
+# Ensure UTF-8 filenames (Vietnamese) work correctly on GitHub/Linux
+* text=auto eol=lf
+*.py text eol=lf
+*.md text eol=lf
+*.toml text eol=lf
+*.txt text eol=lf
+*.json text eol=lf
+*.docx binary
+*.xlsx binary
