@@ -145,6 +145,29 @@ def get_available_branding_logos() -> list[dict]:
     return available
 
 
+def render_branding_banner() -> None:
+    """Hiển thị dải logo nhận diện ở đầu trang nếu có file logo."""
+    logos = get_available_branding_logos()
+    if not logos:
+        return
+
+    cols = st.columns([1, 5])
+    with cols[0]:
+        st.image(str(logos[0]["path"]), use_container_width=True)
+    with cols[1]:
+        st.markdown(
+            f"""
+<div style="padding-top:0.25rem;">
+  <div style="color:#52616b;font-size:0.82rem;font-weight:600;">{logos[0]['label']}</div>
+  <div style="color:#12344d;font-size:1.05rem;font-weight:700;">{HOST_ORG}</div>
+  <div style="color:#52616b;font-size:0.9rem;">{PROJECT_NAME}</div>
+</div>
+""",
+            unsafe_allow_html=True,
+        )
+    st.markdown("<div style='height:0.5rem;'></div>", unsafe_allow_html=True)
+
+
 def get_portfolio_status() -> dict[str, int]:
     """Tổng hợp trạng thái danh sách BCL đang có trong phiên làm việc."""
     entries = get_all_bcl()

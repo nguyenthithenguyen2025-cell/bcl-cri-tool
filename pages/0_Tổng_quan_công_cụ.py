@@ -7,6 +7,7 @@ from utils.sidebar import render_sidebar
 from utils.ui import (
     APP_NAME,
     apply_global_styles,
+    render_branding_banner,
     render_page_header,
     render_status_summary,
     render_workflow_overview,
@@ -15,6 +16,7 @@ from utils.ui import (
 
 apply_global_styles()
 render_sidebar()
+render_branding_banner()
 
 render_page_header(
     APP_NAME,
