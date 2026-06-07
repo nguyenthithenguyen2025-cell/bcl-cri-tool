@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-"""Trang 6 — Xuất báo cáo kỹ thuật (Excel, Word, PDF)."""
+"""Trang 6 — Xuất báo cáo kỹ thuật (Excel, Word, PDF) và lưu/tải phiên."""
 
 import streamlit as st
-from utils.session import get_all_bcl, count_bcl
+from utils.session import get_all_bcl, count_bcl, export_session_json, import_session_json
 from utils.sidebar import render_sidebar
 
 st.set_page_config(page_title="Xuất báo cáo — BCL-CRI Tool", layout="wide")
@@ -14,11 +14,31 @@ if count_bcl() == 0:
         "💡 Chưa có BCL nào. Hãy vào trang **Khai báo BCL** → **Nhập thông số CRI** "
         "để có dữ liệu trước khi xuất báo cáo."
     )
+
+    st.subheader("Tải phiên làm việc đã lưu")
+    st.caption("Nếu bạn đã xuất phiên thành file JSON trước đó, hãy tải lại để tiếp tục.")
+    uploaded_restore = st.file_uploader(
+        "Chọn file JSON phiên làm việc (.json):",
+        type=["json"],
+        key="restore_empty",
+    )
+    if uploaded_restore is not None:
+        n_added, err = import_session_json(uploaded_restore.getvalue())
+        if err:
+            st.error(f"❌ {err}")
+        elif n_added == 0:
+            st.warning("File không chứa BCL mới nào (có thể đã tồn tại trong phiên hiện tại).")
+        else:
+            st.success(f"✅ Đã tải lại {n_added} BCL từ phiên cũ.")
+            st.rerun()
+
+    st.divider()
     st.markdown("""
 **Trang này hỗ trợ xuất các định dạng sau:**
 - **Excel (.xlsx):** 3 sheet — Thông tin BCL | Điểm CRI | Kết quả & Giải pháp
 - **Word (.docx):** Báo cáo kỹ thuật đầy đủ theo mẫu (thông tin BCL, bảng CRI, biểu đồ, giải pháp, căn cứ pháp lý)
-- **PDF:** In trực tiếp từ file Word hoặc trình duyệt
+- **PDF:** In trực tiếp từ file HTML bằng Chrome/Edge (Ctrl+P)
+- **JSON:** Lưu toàn bộ phiên làm việc để tải lại sau
     """)
     st.stop()
 
@@ -155,6 +175,50 @@ if st.button("📥 Tạo file HTML (in PDF)", type="primary"):
 st.divider()
 
 # ════════════════════════════════════════════════════════
+# LƯU / TẢI PHIÊN LÀM VIỆC (JSON)
+# ════════════════════════════════════════════════════════
+st.subheader("6. Lưu / Tải phiên làm việc")
+st.caption(
+    "Lưu toàn bộ dữ liệu BCL trong phiên hiện tại thành file JSON. "
+    "Tải lại file này lần sau để tiếp tục mà không cần nhập lại từ đầu."
+)
+
+col_save, col_load = st.columns(2)
+
+with col_save:
+    st.markdown("**Lưu phiên hiện tại**")
+    from datetime import datetime as _dt
+    fname_json = f"BCL_CRI_phien_{_dt.now().strftime('%Y%m%d_%H%M')}.json"
+    json_bytes = export_session_json()
+    st.download_button(
+        label=f"💾 Tải xuống JSON ({count_bcl()} BCL)",
+        data=json_bytes,
+        file_name=fname_json,
+        mime="application/json",
+        type="primary",
+    )
+    st.caption(f"File: `{fname_json}`")
+
+with col_load:
+    st.markdown("**Tải lại phiên cũ**")
+    uploaded_json = st.file_uploader(
+        "Chọn file JSON đã lưu:",
+        type=["json"],
+        key="restore_full",
+    )
+    if uploaded_json is not None:
+        n_added, err = import_session_json(uploaded_json.getvalue())
+        if err:
+            st.error(f"❌ {err}")
+        elif n_added == 0:
+            st.info("Không có BCL mới — tất cả ID đã tồn tại trong phiên hiện tại.")
+        else:
+            st.success(f"✅ Đã nhập thêm {n_added} BCL từ file.")
+            st.rerun()
+
+st.divider()
+
+# ════════════════════════════════════════════════════════
 # LƯU Ý
 # ════════════════════════════════════════════════════════
 st.info("""
@@ -162,5 +226,6 @@ st.info("""
 - **Excel:** Phù hợp để lưu trữ và xử lý số liệu thêm.
 - **Word:** Phù hợp để trình ký hoặc đính kèm hồ sơ kỹ thuật (định dạng .docx).
 - **HTML → PDF:** Mở file HTML bằng Chrome/Edge → Ctrl+P → Destination: Save as PDF → Print. Hỗ trợ đầy đủ tiếng Việt.
+- **JSON:** Lưu toàn bộ phiên làm việc. Tải lại file này để tiếp tục mà không cần nhập lại.
 - Nếu Word hiển thị font lỗi, hãy kiểm tra font chữ đã được cài đặt trên máy tính.
 """)

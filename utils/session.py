@@ -17,6 +17,7 @@ Cấu trúc dữ liệu mỗi BCL trong session:
   st.session_state["bcl_active_id"] = str   # BCL đang xem/chỉnh sửa
 """
 
+import json as _json
 import uuid
 from datetime import datetime
 import streamlit as st
@@ -178,3 +179,55 @@ def clear_all_bcl():
     """
     st.session_state["bcl_list"] = []
     st.session_state["bcl_active_id"] = None
+
+
+def export_session_json() -> bytes:
+    """
+    Xuất toàn bộ danh sách BCL dưới dạng JSON bytes (UTF-8).
+    Dùng để lưu phiên làm việc ra file và tải lại sau.
+    """
+    _ensure_session()
+    data = {
+        "exported_at": datetime.now().isoformat(timespec="seconds"),
+        "app_version": "1.0",
+        "bcl_list": st.session_state["bcl_list"],
+        "active_id": st.session_state.get("bcl_active_id"),
+    }
+    return _json.dumps(data, ensure_ascii=False, indent=2).encode("utf-8")
+
+
+def import_session_json(raw: bytes) -> tuple[int, str]:
+    """
+    Nhập danh sách BCL từ JSON bytes. Gộp với dữ liệu hiện có (bỏ qua ID trùng).
+
+    Returns:
+        (số BCL thêm thành công, thông báo lỗi — rỗng nếu thành công)
+    """
+    _ensure_session()
+    try:
+        data = _json.loads(raw.decode("utf-8"))
+    except Exception as e:
+        return 0, f"Không thể đọc file JSON: {e}"
+
+    bcl_list = data.get("bcl_list")
+    if not isinstance(bcl_list, list):
+        return 0, "Định dạng file không hợp lệ (thiếu trường 'bcl_list')."
+
+    existing_ids = {e["id"] for e in st.session_state["bcl_list"]}
+    added = 0
+    last_id = None
+    for entry in bcl_list:
+        if not isinstance(entry, dict):
+            continue
+        if not all(k in entry for k in ("id", "info", "scores", "result")):
+            continue
+        if entry["id"] not in existing_ids:
+            st.session_state["bcl_list"].append(entry)
+            existing_ids.add(entry["id"])
+            last_id = entry["id"]
+            added += 1
+
+    if last_id:
+        st.session_state["bcl_active_id"] = last_id
+
+    return added, ""
