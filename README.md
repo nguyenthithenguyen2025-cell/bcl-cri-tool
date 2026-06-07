@@ -1,6 +1,6 @@
-# BCL-CRI Decision Support Tool
+# Công cụ hỗ trợ lựa chọn giải pháp đóng bãi chôn lấp CTRSH
 
-**Công cụ Hỗ trợ Quyết định Đóng bãi Chôn lấp CTRSH**
+**BCL-CRI Tool**
 
 Ứng dụng web tính toán Chỉ số Rủi ro Tổng hợp (CRI) và khuyến nghị giải pháp đóng bãi cho bãi chôn lấp không hợp vệ sinh tại Việt Nam.
 
@@ -13,6 +13,12 @@
 ```bash
 pip install -r requirements.txt
 streamlit run app.py
+```
+
+## Kiểm thử
+
+```bash
+python -m unittest discover -s tests -v
 ```
 
 ## Tài liệu dự án

@@ -5,10 +5,17 @@ import streamlit as st
 import pandas as pd
 from utils.session import get_bcl_summary_list, count_bcl
 from utils.sidebar import render_sidebar
+from utils.ui import apply_global_styles, render_page_header
 
 st.set_page_config(page_title="So sánh BCL — BCL-CRI Tool", layout="wide")
+apply_global_styles()
 render_sidebar()
-st.title("🏆 Bảng xếp hạng — So sánh nhiều BCL")
+render_page_header(
+    "So sánh nhiều bãi chôn lấp",
+    "Tổng hợp, lọc và xếp hạng các bãi chôn lấp theo kết quả CRI để hỗ trợ xác định ưu tiên "
+    "xử lý hoặc lập kế hoạch đầu tư.",
+    section="Dashboard so sánh",
+)
 
 if count_bcl() == 0:
     st.info(
@@ -74,12 +81,13 @@ RISK_EMOJI = {1: "🟢", 2: "🟡", 3: "🟠", 4: "🔴", None: "⚪"}
 
 rows = []
 for i, s in enumerate(filtered, 1):
-    cri_str = f"{s['CRI']:.4f}" if s["CRI"] is not None else "BCL-HVS"
+    status_label = s.get("status_label", "BCL-HVS")
+    cri_str = f"{s['CRI']:.4f}" if s["CRI"] is not None else status_label
     h_str = f"{s['H']:.4f}" if s["H"] is not None else "—"
     p_str = f"{s['P']:.4f}" if s["P"] is not None else "—"
     r_str = f"{s['R']:.4f}" if s["R"] is not None else "—"
     level = s["risk_level"]
-    level_str = RISK_EMOJI.get(level, "⚪") + " " + RISK_LEVEL_LABELS.get(level, "BCL-HVS")
+    level_str = RISK_EMOJI.get(level, "⚪") + " " + RISK_LEVEL_LABELS.get(level, status_label)
     rows.append({
         "STT": i,
         "Tên BCL": s["ten_bcl"],
@@ -173,8 +181,8 @@ if not df.empty:
                 f"{s['H']:.4f}" if s["H"] else "—",
                 f"{s['P']:.4f}" if s["P"] else "—",
                 f"{s['R']:.4f}" if s["R"] else "—",
-                f"{s['CRI']:.4f}" if s["CRI"] else "BCL-HVS",
-                RISK_LEVEL_LABELS.get(s["risk_level"], "BCL-HVS"),
+                f"{s['CRI']:.4f}" if s["CRI"] is not None else s.get("status_label", "BCL-HVS"),
+                RISK_LEVEL_LABELS.get(s["risk_level"], s.get("status_label", "BCL-HVS")),
                 s["solution_name"],
             ]
             ws.append(row)

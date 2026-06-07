@@ -4,10 +4,17 @@
 import streamlit as st
 from utils.session import get_all_bcl, count_bcl, export_session_json, import_session_json
 from utils.sidebar import render_sidebar
+from utils.ui import apply_global_styles, render_page_header
 
 st.set_page_config(page_title="Xuất báo cáo — BCL-CRI Tool", layout="wide")
+apply_global_styles()
 render_sidebar()
-st.title("📄 Xuất báo cáo kỹ thuật")
+render_page_header(
+    "Xuất hồ sơ và báo cáo kỹ thuật",
+    "Tạo file Excel, Word, HTML/PDF và JSON để lưu trữ hồ sơ đánh giá, chia sẻ kết quả "
+    "hoặc tiếp tục phiên làm việc sau.",
+    section="Bước 05 — Xuất hồ sơ",
+)
 
 if count_bcl() == 0:
     st.info(

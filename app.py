@@ -5,9 +5,19 @@ Chạy: streamlit run app.py
 """
 
 import streamlit as st
+from utils.ui import (
+    APP_NAME,
+    APP_VERSION,
+    HOST_ORG,
+    PROJECT_NAME,
+    apply_global_styles,
+    render_page_header,
+    render_status_summary,
+    render_workflow_overview,
+)
 
 st.set_page_config(
-    page_title="Công cụ CRI — Đóng bãi chôn lấp CTRSH",
+    page_title=APP_NAME,
     page_icon="♻️",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -15,72 +25,37 @@ st.set_page_config(
         "Get Help": None,
         "Report a bug": None,
         "About": (
-            "**Công cụ Hỗ trợ Quyết định Đóng bãi Chôn lấp CTRSH**\n\n"
-            "Phiên bản 1.0 — Đề tài TNMT.2024.05.05\n"
-            "Trường Đại học Thủy Lợi, 2026\n\n"
+            f"**{APP_NAME}**\n\n"
+            f"Phiên bản {APP_VERSION} — {PROJECT_NAME}\n"
+            f"{HOST_ORG}, 2026\n\n"
             "Căn cứ: TT 02/2022/TT-BTNMT | QCVN 96:2025/BNNMT | TCVN 13766:2023"
         ),
     },
 )
 
-# ── CSS toàn cục
-st.markdown("""
-<style>
-  /* Bảng xếp hạng và kết quả */
-  .metric-card {
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 16px 20px;
-    border-left: 5px solid #1f77b4;
-    margin-bottom: 12px;
-  }
-  .risk-badge {
-    display: inline-block;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-weight: 600;
-    font-size: 0.9rem;
-  }
-  /* Ẩn menu mặc định Streamlit */
-  #MainMenu {visibility: hidden;}
-  footer {visibility: hidden;}
-</style>
-""", unsafe_allow_html=True)
+apply_global_styles()
 
 # ── Sidebar — điều hướng và thông tin session
 from utils.sidebar import render_sidebar
 render_sidebar()
 
 # ── Trang chủ (khi truy cập app.py trực tiếp)
-st.title("♻️ Công cụ Hỗ trợ Quyết định Đóng bãi Chôn lấp CTRSH")
-st.markdown(
-    "> Tính toán Chỉ số Rủi ro Tổng hợp (CRI), phân loại mức độ và khuyến nghị "
-    "giải pháp đóng bãi cho bãi chôn lấp không hợp vệ sinh (BCL-KHVS) tại Việt Nam."
+render_page_header(
+    APP_NAME,
+    "Ứng dụng hỗ trợ cơ quan quản lý, địa phương và đơn vị tư vấn đánh giá rủi ro "
+    "bãi chôn lấp chất thải rắn sinh hoạt, phân loại mức độ ưu tiên và lựa chọn nhóm "
+    "giải pháp đóng bãi phù hợp.",
+    section="Tổng quan",
 )
 
-col1, col2, col3 = st.columns(3)
-with col1:
-    st.markdown("### 📋 Bắt đầu")
-    st.markdown(
-        "1. **Giới thiệu** — Đọc hướng dẫn sử dụng\n"
-        "2. **Khai báo BCL** — Nhập thông tin bãi\n"
-        "3. **Nhập thông số CRI** — 14 thông số đánh giá"
-    )
-with col2:
-    st.markdown("### 📊 Xem kết quả")
-    st.markdown(
-        "4. **Kết quả & Phân tích** — CRI, biểu đồ, giải pháp\n"
-        "5. **So sánh BCL** — Bảng xếp hạng nhiều bãi"
-    )
-with col3:
-    st.markdown("### 📄 Xuất báo cáo")
-    st.markdown(
-        "6. **Xuất báo cáo** — Word, PDF, Excel\n\n"
-        "Sử dụng menu **Pages** ở thanh bên trái để điều hướng."
-    )
+render_status_summary()
+
+st.divider()
+st.markdown("### Quy trình sử dụng")
+render_workflow_overview()
 
 st.divider()
 st.info(
-    "💡 **Hướng dẫn nhanh:** Chọn trang **Khai báo BCL** ở sidebar bên trái để bắt đầu nhập dữ liệu. "
-    "Có thể nhập nhiều BCL và so sánh trên cùng một bảng xếp hạng."
+    "Bắt đầu tại trang **Khai báo BCL** trong thanh điều hướng bên trái. "
+    "Công cụ cho phép nhập nhiều bãi chôn lấp, so sánh mức độ rủi ro và xuất hồ sơ kỹ thuật."
 )

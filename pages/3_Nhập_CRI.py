@@ -5,13 +5,61 @@ import streamlit as st
 from config.parameters import PARAMETERS, PARAMS_BY_GROUP, PARAM_BY_ID
 from core.calculator import calculate_cri
 from core.classifier import classify_and_recommend, get_top_risk_params
-from utils.session import add_bcl, update_bcl
+from utils.session import add_bcl, update_bcl, get_all_bcl, get_bcl, set_active_bcl
 from utils.sidebar import render_sidebar
+from utils.ui import apply_global_styles, render_page_header
 
 st.set_page_config(page_title="Nhập thông số CRI — BCL-CRI Tool", layout="wide")
+apply_global_styles()
 render_sidebar()
 
-st.title("📝 Nhập 14 thông số CRI")
+render_page_header(
+    "Nhập 14 thông số CRI",
+    "Đánh giá bãi chôn lấp không hợp vệ sinh theo mô hình nguồn nguy hại, đường lan truyền "
+    "và đối tượng tiếp nhận. Dữ liệu thiếu được xử lý theo nguyên tắc thận trọng.",
+    section="Bước 03 — Đánh giá CRI",
+)
+
+# ── Chọn BCL-KHVS đang nhập/chỉnh sửa
+all_entries = get_all_bcl()
+khvs_entries = [entry for entry in all_entries if entry.get("info", {}).get("loai_bcl", "KHVS") == "KHVS"]
+if khvs_entries:
+    options = ["__draft__"] + [entry["id"] for entry in khvs_entries]
+    active_editing_id = st.session_state.get("_bcl_active_editing_id")
+    active_view_id = st.session_state.get("bcl_active_id")
+    default_id = active_editing_id or active_view_id
+    default_index = options.index(default_id) if default_id in options else 0
+
+    selected_cri_id = st.selectbox(
+        "Chọn BCL-KHVS để nhập hoặc chỉnh sửa thông số CRI:",
+        options=options,
+        index=default_index,
+        format_func=lambda x: (
+            "Bản nháp hiện tại"
+            if x == "__draft__"
+            else f"{get_bcl(x)['info'].get('ten_bcl', '(chưa đặt tên)')} ({x})"
+        ),
+        key="bcl_cri_edit_selector",
+    )
+
+    if selected_cri_id == "__draft__":
+        state_keys = ["_bcl_active_editing_id", "_bcl_saved_info",
+                      "_cri_scores_draft", "_cri_notes_draft", "bcl_active_id"]
+        if any(st.session_state.get(key) is not None for key in state_keys):
+            for key in ["_bcl_active_editing_id", "_bcl_saved_info",
+                        "_cri_scores_draft", "_cri_notes_draft"]:
+                st.session_state.pop(key, None)
+            st.session_state["bcl_active_id"] = None
+            st.rerun()
+    elif selected_cri_id != st.session_state.get("_bcl_active_editing_id"):
+        selected_entry = get_bcl(selected_cri_id)
+        if selected_entry:
+            st.session_state["_bcl_active_editing_id"] = selected_cri_id
+            st.session_state["_bcl_saved_info"] = selected_entry.get("info", {})
+            st.session_state["_cri_scores_draft"] = selected_entry.get("scores", {})
+            st.session_state["_cri_notes_draft"] = selected_entry.get("missing_notes", {})
+            set_active_bcl(selected_cri_id)
+            st.rerun()
 
 # ── Kiểm tra xem đã có thông tin BCL chưa
 saved_info = st.session_state.get("_bcl_saved_info")
@@ -294,4 +342,26 @@ with col_b:
                  help="Xóa tất cả điểm đã chọn, giữ lại BCL trong danh sách"):
         st.session_state.pop("_cri_scores_draft", None)
         st.session_state.pop("_cri_notes_draft", None)
+        editing_id = st.session_state.get("_bcl_active_editing_id")
+        if editing_id:
+            update_bcl(
+                editing_id,
+                scores={},
+                missing_notes={},
+                result={
+                    "H": None,
+                    "P": None,
+                    "R": None,
+                    "CRI": None,
+                    "risk": {
+                        "level": None,
+                        "label": "BCL-KHVS — chưa tính CRI",
+                        "color": "#95a5a6",
+                        "cri": None,
+                    },
+                    "solution": {},
+                    "missing_params": [],
+                    "assumed_max": [],
+                },
+            )
         st.rerun()

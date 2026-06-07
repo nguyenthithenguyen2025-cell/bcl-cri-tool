@@ -4,14 +4,59 @@
 import streamlit as st
 from utils.validators import validate_bcl_info
 from utils.sidebar import render_sidebar
+from utils.session import get_all_bcl, get_bcl, set_active_bcl
+from utils.ui import apply_global_styles, render_page_header
 
 st.set_page_config(page_title="Khai báo BCL — BCL-CRI Tool", layout="wide")
+apply_global_styles()
 render_sidebar()
-st.title("📋 Khai báo thông tin bãi chôn lấp")
-st.caption(
-    "Nhập thông tin định danh và đặc điểm vật lý của bãi chôn lấp. "
-    "Các trường đánh dấu * là bắt buộc."
+render_page_header(
+    "Khai báo thông tin bãi chôn lấp",
+    "Nhập thông tin định danh, vị trí, quy mô, lịch sử hoạt động và loại hình bãi chôn lấp. "
+    "Các trường đánh dấu * là bắt buộc.",
+    section="Bước 01 — Khai báo BCL",
 )
+
+# ── Chọn BCL đang chỉnh sửa
+all_entries = get_all_bcl()
+if all_entries:
+    options = ["__new__"] + [entry["id"] for entry in all_entries]
+    active_editing_id = st.session_state.get("_bcl_active_editing_id")
+    active_view_id = st.session_state.get("bcl_active_id")
+    default_id = active_editing_id or active_view_id
+    default_index = options.index(default_id) if default_id in options else 0
+
+    selected_edit_id = st.selectbox(
+        "Chọn BCL để chỉnh sửa thông tin chung:",
+        options=options,
+        index=default_index,
+        format_func=lambda x: (
+            "➕ Tạo BCL mới"
+            if x == "__new__"
+            else f"{get_bcl(x)['info'].get('ten_bcl', '(chưa đặt tên)')} ({x})"
+        ),
+        key="bcl_info_edit_selector",
+    )
+
+    if selected_edit_id == "__new__":
+        state_keys = ["_bcl_active_editing_id", "_bcl_saved_info", "_bcl_form_draft",
+                      "_cri_scores_draft", "_cri_notes_draft", "bcl_active_id"]
+        if any(st.session_state.get(key) is not None for key in state_keys):
+            for key in ["_bcl_active_editing_id", "_bcl_saved_info", "_bcl_form_draft",
+                        "_cri_scores_draft", "_cri_notes_draft"]:
+                st.session_state.pop(key, None)
+            st.session_state["bcl_active_id"] = None
+            st.rerun()
+    elif selected_edit_id != st.session_state.get("_bcl_active_editing_id"):
+        selected_entry = get_bcl(selected_edit_id)
+        if selected_entry:
+            st.session_state["_bcl_active_editing_id"] = selected_edit_id
+            st.session_state["_bcl_form_draft"] = selected_entry.get("info", {})
+            st.session_state["_bcl_saved_info"] = selected_entry.get("info", {})
+            st.session_state["_cri_scores_draft"] = selected_entry.get("scores", {})
+            st.session_state["_cri_notes_draft"] = selected_entry.get("missing_notes", {})
+            set_active_bcl(selected_edit_id)
+            st.rerun()
 
 # ── Dữ liệu mẫu (nếu người dùng muốn thử)
 if st.checkbox("📂 Nạp dữ liệu mẫu từ Ví dụ PL2.4"):
@@ -247,4 +292,5 @@ with col_btn:
         for key in ["_bcl_active_editing_id", "_bcl_saved_info", "_bcl_form_draft",
                     "_cri_scores_draft", "_cri_notes_draft"]:
             st.session_state.pop(key, None)
+        st.session_state["bcl_active_id"] = None
         st.rerun()

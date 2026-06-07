@@ -1,9 +1,9 @@
 # HANDOFF NOTE — BCL-CRI Decision Support Tool
 
-**Ngày cập nhật:** 2026-06-07 (Phiên 7 — ĐÃ COMMIT)
+**Ngày cập nhật:** 2026-06-07 (Phiên 8 — ĐANG NÂNG CẤP)
 **Dự án:** Công cụ Hỗ trợ Quyết định Đóng bãi Chôn lấp CTRSH
 **Thư mục dự án:** `D:\1. AI_landfill\landfill-cri-tool\`
-**Git:** Branch `master` — Commit hiện tại: `f606d64`
+**Git:** Branch `master` — Commit gần nhất: `aed46db`
 **GitHub:** https://github.com/nguyenthithenguyen2025-cell/bcl-cri-tool
 **App URL:** https://bcl-cri-tool-f7bzdcw6lzg6yz92ouerqz.streamlit.app
 
@@ -22,14 +22,45 @@
 | Phiên 5 | Tinh chỉnh UI/UX theo phản hồi | ✅ HOÀN THÀNH |
 | Phiên 6 | Cải thiện Trang 1, thêm HTML export, sửa lỗi Word | ✅ HOÀN THÀNH — commit `2cf640d` |
 | **Phiên 7** | **Lưu/tải phiên làm việc dạng JSON (persistence)** | ✅ HOÀN THÀNH — commit `f606d64` |
+| **Phiên 8** | **Chỉnh sửa lại BCL đã nhập, chuẩn hóa giao diện bước 1** | ⏳ ĐANG THỰC HIỆN — chưa commit |
 
-**Git working tree hiện tại:** Sạch — tất cả thay đổi đã được commit và push lên `origin/master`.
+**Git working tree hiện tại:** Có thay đổi chưa commit — đang nâng cấp luồng chỉnh sửa BCL đã nhập.
 
 ---
 
 ## 2. Lịch sử thay đổi theo phiên
 
-### Phiên 7 — 2026-06-07 (MỚI NHẤT — commit `f606d64`)
+### Phiên 8 — 2026-06-07 (ĐANG THỰC HIỆN — chưa commit)
+
+#### 8.1 Nâng cấp luồng chỉnh sửa BCL đã nhập
+
+**Vấn đề:** Sau khi nhập nhiều BCL, người dùng có thể chọn BCL ở trang kết quả nhưng khi quay lại Trang 2 hoặc Trang 3 thì form chưa tự nạp đúng BCL đang chọn. Ngoài ra, nút "Nhập lại thông số CRI" chỉ xóa draft trên form, trong khi bản ghi đã lưu vẫn giữ kết quả CRI cũ.
+
+**Thay đổi đang có trong working tree:**
+
+| File | Thay đổi |
+|------|---------|
+| `pages/2_Khai_báo_BCL.py` | Thêm selectbox chọn BCL để chỉnh sửa thông tin chung; đồng bộ `_bcl_active_editing_id`, `_bcl_saved_info`, `_bcl_form_draft` và draft CRI |
+| `pages/3_Nhập_CRI.py` | Thêm selectbox chọn BCL-KHVS để nhập/chỉnh sửa CRI; nút "Nhập lại thông số CRI" xóa cả kết quả đã lưu của BCL đang chỉnh sửa |
+| `utils/session.py` | Thêm `status_label` để phân biệt "BCL-HVS" và "Chưa tính CRI" |
+| `utils/sidebar.py` | Sidebar hiển thị đúng "Chưa tính CRI" thay vì mặc định coi mọi BCL không có CRI là BCL-HVS |
+| `pages/4_Kết_quả.py` | Thêm thông báo khi BCL chưa có kết quả CRI hoặc giải pháp khuyến nghị |
+| `pages/5_So_sánh_BCL.py` | Bảng so sánh và file Excel xuất ra phân biệt đúng BCL-HVS và BCL-KHVS chưa tính CRI |
+| `tests/test_core_exports.py` | Thêm kiểm thử hồi quy bằng `unittest` cho logic CRI, phân loại HVS/KHVS và xuất Excel/HTML/Word |
+| `utils/ui.py` | Thêm module giao diện dùng chung: tên app chính thức, CSS, tiêu đề trang, trạng thái hồ sơ và quy trình 5 bước |
+| `app.py`, `pages/*.py`, `utils/sidebar.py` | Chuẩn hóa tiêu đề, mô tả trang, sidebar, trạng thái hồ sơ và quy trình nghiệp vụ theo phong cách trang trọng hơn |
+| `.streamlit/config.toml`, `README.md` | Cập nhật theme nhẹ và tên app chính thức: "Công cụ hỗ trợ lựa chọn giải pháp đóng bãi chôn lấp CTRSH" |
+
+**Kiểm tra đã chạy:**
+- `python -m unittest discover -s tests -v`: đạt 4/4 test.
+- Biên dịch cú pháp 24 file Python: đạt.
+- Dữ liệu mẫu PL2.4: CRI = 0,6647; Cấp 3; GP 2.2.
+- Xuất Excel/HTML/Word trong bộ nhớ: đạt.
+- Streamlit cục bộ `http://localhost:8501`: HTTP 200.
+
+---
+
+### Phiên 7 — 2026-06-07 (commit `f606d64`)
 
 #### 7.1 Tính năng lưu/tải phiên làm việc (JSON persistence)
 

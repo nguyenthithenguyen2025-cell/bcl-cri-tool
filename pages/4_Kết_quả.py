@@ -10,10 +10,17 @@ from utils.charts import (
     score_heatmap,
 )
 from utils.sidebar import render_sidebar
+from utils.ui import apply_global_styles, render_page_header
 
 st.set_page_config(page_title="Kết quả — BCL-CRI Tool", layout="wide")
+apply_global_styles()
 render_sidebar()
-st.title("📊 Kết quả & Phân tích")
+render_page_header(
+    "Kết quả và phân tích",
+    "Xem chỉ số H/P/R/CRI, cấp rủi ro, biểu đồ phân tích và nhóm giải pháp đóng bãi khuyến nghị "
+    "cho từng bãi chôn lấp.",
+    section="Bước 04 — Kết quả và giải pháp",
+)
 
 if count_bcl() == 0:
     st.info(
@@ -209,6 +216,11 @@ if solution:
         f"**Mức chi phí ước tính:** {solution.get('estimated_cost_level', '—')}"
     )
     st.caption(f"Căn cứ pháp lý: {solution.get('legal_basis', '—')}")
+else:
+    st.info(
+        "BCL này chưa có kết quả CRI hoặc giải pháp khuyến nghị. "
+        "Hãy nhập tối thiểu một thông số tại trang **Nhập thông số CRI** để hệ thống tự tính."
+    )
 
 # ── Gợi ý tiếp theo
 st.divider()

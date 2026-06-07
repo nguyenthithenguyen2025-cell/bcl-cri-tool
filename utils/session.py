@@ -154,6 +154,13 @@ def get_bcl_summary_list() -> list[dict]:
             "huyen": info.get("huyen", ""),
             "dien_tich_ha": info.get("dien_tich_ha"),
             "loai_bcl": info.get("loai_bcl", "KHVS"),
+            "status_label": (
+                "BCL-HVS"
+                if info.get("loai_bcl") == "HVS"
+                else "Chưa tính CRI"
+                if cri is None
+                else ""
+            ),
             "H": result.get("H"),
             "P": result.get("P"),
             "R": result.get("R"),

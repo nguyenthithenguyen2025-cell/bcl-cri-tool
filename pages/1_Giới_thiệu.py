@@ -3,14 +3,17 @@
 
 import streamlit as st
 from utils.sidebar import render_sidebar
+from utils.ui import APP_NAME, apply_global_styles, render_page_header, render_workflow_overview
 
 st.set_page_config(page_title="Giới thiệu — BCL-CRI Tool", layout="wide")
+apply_global_styles()
 render_sidebar()
 
-st.title("📖 Giới thiệu công cụ hỗ trợ quyết định đóng bãi chôn lấp")
-st.caption(
-    "Đề tài TNMT.2024.05.05 — Trường Đại học Thủy Lợi (2026)  |  "
-    "Căn cứ: Điều 32, TT 02/2022/TT-BTNMT · QCVN 96:2025/BNNMT"
+render_page_header(
+    "Giới thiệu công cụ",
+    f"{APP_NAME} được xây dựng để hỗ trợ đánh giá rủi ro, phân loại mức độ ưu tiên "
+    "và lựa chọn nhóm giải pháp đóng bãi phù hợp cho bãi chôn lấp chất thải rắn sinh hoạt.",
+    section="Tổng quan và hướng dẫn sử dụng",
 )
 
 # ── Callout nhanh
@@ -53,42 +56,9 @@ with col_scope:
 
 st.divider()
 
-# ── Quy trình sử dụng (5 bước với card style)
+# ── Quy trình sử dụng
 st.markdown("## Quy trình sử dụng công cụ")
-
-STEPS = [
-    ("1", "📋", "Khai báo BCL", "Nhập tên, vị trí, diện tích và xác định loại BCL (KHVS / HVS)."),
-    ("2", "📝", "Nhập 14 thông số CRI", "Điền 14 thông số thuộc nhóm H (nguồn), P (đường), R (đối tượng)."),
-    ("3", "🔢", "Tính toán tự động", "Hệ thống tính H, P, R và CRI tổng hợp theo công thức trung bình nhân."),
-    ("4", "📊", "Xem kết quả", "Dashboard biểu đồ, phân tích thông số rủi ro cao và giải pháp khuyến nghị."),
-    ("5", "📄", "Xuất báo cáo", "Tải xuống Word, HTML/PDF hoặc Excel để lưu trữ và trình ký."),
-]
-
-cols = st.columns(5)
-for col, (num, icon, title, desc) in zip(cols, STEPS):
-    with col:
-        st.markdown(
-            f"""
-<div style="
-    border: 1.5px solid #1f77b4;
-    border-radius: 8px;
-    padding: 14px 12px;
-    min-height: 160px;
-    background: #f7fbff;
-">
-<div style="font-size:1.6rem; text-align:center;">{icon}</div>
-<div style="
-    font-weight: bold;
-    font-size: 0.85rem;
-    text-align: center;
-    color: #1f77b4;
-    margin: 6px 0 4px;
-">Bước {num} — {title}</div>
-<div style="font-size: 0.82rem; color: #333; line-height: 1.4;">{desc}</div>
-</div>
-""",
-            unsafe_allow_html=True,
-        )
+render_workflow_overview()
 
 st.divider()
 
