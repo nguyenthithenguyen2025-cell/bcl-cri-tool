@@ -17,11 +17,11 @@ st.title("📝 Nhập 14 thông số CRI")
 # ── Kiểm tra xem đã có thông tin BCL chưa
 saved_info = st.session_state.get("_bcl_saved_info")
 if saved_info is None:
-    st.warning(
-        "⚠️ Chưa có thông tin BCL. "
-        "Vui lòng quay lại trang **Khai báo BCL** để nhập thông tin trước."
+    st.info(
+        "💡 Chưa có thông tin định danh BCL. Bạn vẫn có thể nhập thông số CRI và tính toán. "
+        "Quay lại trang **Khai báo BCL** để bổ sung thông tin định danh trước hoặc sau."
     )
-    st.stop()
+    saved_info = {}
 
 if saved_info.get("loai_bcl") == "HVS":
     st.info(

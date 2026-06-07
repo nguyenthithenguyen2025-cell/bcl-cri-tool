@@ -16,10 +16,17 @@ render_sidebar()
 st.title("📊 Kết quả & Phân tích")
 
 if count_bcl() == 0:
-    st.warning(
-        "⚠️ Chưa có BCL nào được đánh giá. "
-        "Vui lòng quay lại **Khai báo BCL** → **Nhập thông số CRI** để bắt đầu."
+    st.info(
+        "💡 Chưa có BCL nào được đánh giá. "
+        "Hãy vào trang **Khai báo BCL** → **Nhập thông số CRI** để bắt đầu."
     )
+    st.markdown("""
+**Trang này sẽ hiển thị sau khi có kết quả:**
+- Thẻ kết quả chính: CRI, cấp rủi ro (1–4), màu phân loại (xanh / vàng / cam / đỏ)
+- Biểu đồ radar 14 thông số, đồng hồ CRI, biểu đồ cột H/P/R, bảng nhiệt điểm
+- Phân tích tự động: top 3 thông số có mức rủi ro cao nhất
+- Giải pháp đóng bãi khuyến nghị: hạng mục bắt buộc, tùy chọn, ưu/nhược điểm, căn cứ pháp lý
+    """)
     st.stop()
 
 # ── Chọn BCL để xem

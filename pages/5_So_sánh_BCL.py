@@ -11,9 +11,18 @@ render_sidebar()
 st.title("🏆 Bảng xếp hạng — So sánh nhiều BCL")
 
 if count_bcl() == 0:
-    st.warning(
-        "⚠️ Chưa có BCL nào. Vui lòng nhập ít nhất một BCL trước khi so sánh."
+    st.info(
+        "💡 Chưa có BCL nào. Hãy vào trang **Khai báo BCL** → **Nhập thông số CRI** "
+        "để thêm ít nhất một BCL. Thêm nhiều BCL để so sánh."
     )
+    st.markdown("""
+**Trang này sẽ hiển thị sau khi có dữ liệu:**
+- Bảng xếp hạng tất cả BCL theo CRI giảm dần (màu nền theo cấp rủi ro)
+- Bộ lọc theo tỉnh/thành, cấp rủi ro, giải pháp khuyến nghị
+- Biểu đồ so sánh chỉ số H / P / R giữa các BCL
+- Biểu đồ phân tán CRI theo diện tích BCL
+- Xuất bảng xếp hạng sang Excel
+    """)
     st.stop()
 
 if count_bcl() == 1:

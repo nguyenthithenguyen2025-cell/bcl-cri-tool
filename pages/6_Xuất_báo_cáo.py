@@ -10,9 +10,16 @@ render_sidebar()
 st.title("📄 Xuất báo cáo kỹ thuật")
 
 if count_bcl() == 0:
-    st.warning(
-        "⚠️ Chưa có BCL nào. Vui lòng nhập ít nhất một BCL trước khi xuất báo cáo."
+    st.info(
+        "💡 Chưa có BCL nào. Hãy vào trang **Khai báo BCL** → **Nhập thông số CRI** "
+        "để có dữ liệu trước khi xuất báo cáo."
     )
+    st.markdown("""
+**Trang này hỗ trợ xuất các định dạng sau:**
+- **Excel (.xlsx):** 3 sheet — Thông tin BCL | Điểm CRI | Kết quả & Giải pháp
+- **Word (.docx):** Báo cáo kỹ thuật đầy đủ theo mẫu (thông tin BCL, bảng CRI, biểu đồ, giải pháp, căn cứ pháp lý)
+- **PDF:** In trực tiếp từ file Word hoặc trình duyệt
+    """)
     st.stop()
 
 all_bcl = get_all_bcl()
