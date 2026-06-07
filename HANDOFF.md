@@ -17,10 +17,12 @@
 | Sprint 3 | Biểu đồ (6 loại) + Export Excel/Word | ✅ HOÀN THÀNH |
 | Sprint 4 | Test + Sửa lỗi + Git commit | ✅ HOÀN THÀNH |
 | Sprint 5 | HTML demo để kiểm tra trước | ✅ HOÀN THÀNH (Phiên 3) |
-| Sprint 6 | Deploy GitHub + Streamlit Cloud | ✅ GitHub XONG — Streamlit Cloud: CHỜ THỰC HIỆN |
+| Sprint 6 | Deploy GitHub + Streamlit Cloud | ✅ HOÀN THÀNH (Phiên 4) |
 
-**Tóm tắt:** App Streamlit hoàn chỉnh (31 files), đã push lên GitHub public repo. Việc còn lại duy nhất là deploy lên Streamlit Community Cloud (thao tác trên web, mất ~3 phút).
+**Tóm tắt:** App Streamlit hoàn chỉnh, đã deploy thành công. Test thủ công 5 bước không có lỗi.
 
+**URL công khai:** https://bcl-cri-tool-f7bzdcw6lzg6yz92ouerqz.streamlit.app  
+**GitHub:** https://github.com/nguyenthithenguyen2025-cell/bcl-cri-tool  
 **Git working tree hiện tại:** Sạch — tất cả file đã commit và push.
 
 ---
