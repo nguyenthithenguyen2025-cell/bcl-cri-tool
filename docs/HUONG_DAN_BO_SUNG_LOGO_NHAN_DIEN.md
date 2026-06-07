@@ -6,9 +6,9 @@
 
 | Nhóm nhận diện | Tên file cần đặt | Ghi chú |
 |----------------|------------------|---------|
-| Đơn vị chủ trì | `logo_don_vi_chu_tri.png` | Ví dụ: Trường Đại học Thủy Lợi hoặc đơn vị chủ trì đề tài |
-| Đề tài/chương trình | `logo_de_tai.png` | Nếu đề tài có logo/biểu trưng riêng |
-| Cơ quan phối hợp | `logo_co_quan_phoi_hop.png` | Nếu có cơ quan phối hợp chính thức |
+| Đơn vị chủ trì | `logo_don_vi_chu_tri.png` hoặc `logo_don_vi_chu_tri.webp` | Ví dụ: Trường Đại học Thủy Lợi hoặc đơn vị chủ trì đề tài |
+| Đề tài/chương trình | `logo_de_tai.png` hoặc `logo_de_tai.webp` | Nếu đề tài có logo/biểu trưng riêng |
+| Cơ quan phối hợp | `logo_co_quan_phoi_hop.png` hoặc `logo_co_quan_phoi_hop.webp` | Nếu có cơ quan phối hợp chính thức |
 
 Các file đặt tại:
 
@@ -18,7 +18,7 @@ assets/branding/
 
 ## 2. Yêu cầu định dạng
 
-- Ưu tiên định dạng `.png` nền trong suốt.
+- Ưu tiên định dạng `.png` nền trong suốt; app cũng hỗ trợ `.webp`, `.jpg`, `.jpeg`, `.svg`.
 - Chiều ngang khuyến nghị: 300-600 px.
 - Chiều cao khuyến nghị: 120-300 px.
 - Dung lượng mỗi logo nên dưới 500 KB.

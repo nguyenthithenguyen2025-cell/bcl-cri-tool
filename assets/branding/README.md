@@ -4,13 +4,13 @@
 
 ## Tên file khuyến nghị
 
-- `logo_don_vi_chu_tri.png` — logo đơn vị chủ trì.
-- `logo_de_tai.png` — logo/biểu trưng của đề tài hoặc chương trình.
-- `logo_co_quan_phoi_hop.png` — logo cơ quan phối hợp.
+- `logo_don_vi_chu_tri.png` hoặc `logo_don_vi_chu_tri.webp` — logo đơn vị chủ trì.
+- `logo_de_tai.png` hoặc `logo_de_tai.webp` — logo/biểu trưng của đề tài hoặc chương trình.
+- `logo_co_quan_phoi_hop.png` hoặc `logo_co_quan_phoi_hop.webp` — logo cơ quan phối hợp.
 
 ## Yêu cầu kỹ thuật
 
-- Định dạng ưu tiên: `.png` nền trong suốt.
+- Định dạng ưu tiên: `.png` nền trong suốt; app cũng hỗ trợ `.webp`, `.jpg`, `.jpeg`, `.svg`.
 - Kích thước khuyến nghị: chiều ngang 300-600 px, chiều cao 120-300 px.
 - Dung lượng mỗi file nên dưới 500 KB.
 - Không dùng ảnh mờ, ảnh chụp màn hình hoặc logo bị cắt viền.

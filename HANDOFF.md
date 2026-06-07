@@ -78,6 +78,7 @@
 | `assets/branding/README.md` | Thêm hướng dẫn tên file và yêu cầu kỹ thuật cho logo |
 | `docs/HUONG_DAN_BO_SUNG_LOGO_NHAN_DIEN.md` | Thêm hướng dẫn bổ sung logo nhận diện chính thức |
 | `.gitignore` | Cho phép commit logo trong `assets/` để Streamlit Cloud hiển thị được |
+| `assets/branding/logo_don_vi_chu_tri.webp` | Thêm logo Trường Đại học Thủy lợi lấy từ website chính thức `https://tlu.edu.vn/` |
 
 **Kiểm tra đã chạy:**
 - `python -m unittest discover -s tests -v`: đạt 13/13 test.

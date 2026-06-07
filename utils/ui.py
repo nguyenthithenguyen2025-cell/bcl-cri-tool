@@ -22,17 +22,18 @@ BRANDING_DIR = ROOT_DIR / "assets" / "branding"
 BRANDING_LOGOS = [
     {
         "label": "Đơn vị chủ trì",
-        "path": BRANDING_DIR / "logo_don_vi_chu_tri.png",
+        "stem": "logo_don_vi_chu_tri",
     },
     {
         "label": "Đề tài",
-        "path": BRANDING_DIR / "logo_de_tai.png",
+        "stem": "logo_de_tai",
     },
     {
         "label": "Cơ quan phối hợp",
-        "path": BRANDING_DIR / "logo_co_quan_phoi_hop.png",
+        "stem": "logo_co_quan_phoi_hop",
     },
 ]
+BRANDING_EXTENSIONS = [".png", ".webp", ".jpg", ".jpeg", ".svg"]
 
 
 WORKFLOW_STEPS = [
@@ -134,7 +135,14 @@ def render_page_header(title: str, description: str, section: str | None = None)
 
 def get_available_branding_logos() -> list[dict]:
     """Trả về các logo nhận diện đã có trên filesystem."""
-    return [logo for logo in BRANDING_LOGOS if logo["path"].exists()]
+    available = []
+    for logo in BRANDING_LOGOS:
+        for ext in BRANDING_EXTENSIONS:
+            path = BRANDING_DIR / f"{logo['stem']}{ext}"
+            if path.exists():
+                available.append({"label": logo["label"], "path": path})
+                break
+    return available
 
 
 def get_portfolio_status() -> dict[str, int]:
