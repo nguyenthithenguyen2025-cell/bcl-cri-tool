@@ -4,3 +4,4 @@ __pycache__/
 .env
 streamlit_log.txt
 assets/logo.png
+bcl_cri_demo.html
